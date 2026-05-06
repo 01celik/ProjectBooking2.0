@@ -10,7 +10,7 @@ function Header() {
 
       <Navbar />
 
-      <Link to="/joinnow" className="header-login">
+      <Link to="/login" className="header-login">
         <div className="login-icon-circle">
           <svg
             className="login-icon"
