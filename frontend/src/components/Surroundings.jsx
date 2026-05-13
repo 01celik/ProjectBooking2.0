@@ -1,16 +1,21 @@
 import beach from "../assets/beach.jpg";
+import { Link } from "react-router-dom";
 
 function Surroundings() {
   return (
-    <section
-      className="surroundings"
-      style={{ backgroundImage: `url(${beach})` }}
+    <Link
+      to="/surroundings"
+      className="surroundings-link"
     >
-      <div className="surroundings-content">
-        <h2>Explore the surroundings</h2>
-        <a href="#">Discover more</a>
-      </div>
-    </section>
+      <section
+        className="surroundings"
+        style={{ backgroundImage: `url(${beach})` }}
+      >
+        <div className="surroundings-content">
+          <h2>EXPLORE THE SURROUNDINGS</h2>
+        </div>
+      </section>
+    </Link>
   );
 }
 
