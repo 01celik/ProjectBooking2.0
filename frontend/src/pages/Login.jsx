@@ -43,6 +43,7 @@ function Login() {
       }
 
       setUser(data.user ?? data);
+      console.log("hello");
       navigate("/");
     } catch (err) {
       console.error(err);
