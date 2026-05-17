@@ -1,94 +1,71 @@
 import TopBar from "../components/TopBar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import gymImage from "../assets/Hotel Gym.png";
-import saunaImage from "../assets/Hotel Sauna.png";
-import massageImage from "../assets/Hotel Massage.png";
-import "../styles/wellness.css";
+
+import wellnessSlide1 from "../assets/wellness-slide-1.jpg";
+import wellnessSlide2 from "../assets/wellness-slide-2.jpg";
+import wellnessSlide3 from "../assets/wellness-slide-3.jpg";
+import wellnessSlide4 from "../assets/wellness-slide-4.jpg";
 
 function Wellness() {
   return (
-    <div className="wellness-page">
+    <>
       <TopBar />
       <Header />
 
-      <main>
-        <section className="wellness-hero">
-          <div className="wellness-hero-content">
-            <p className="wellness-kicker">Relax & recharge</p>
-            <h1>Wellness</h1>
+      <main className="wellness-page">
+        <section className="wellness-slideshow">
+          <img src={wellnessSlide1} alt="Spa relaxation" />
+          <img src={wellnessSlide2} alt="Sauna" />
+          <img src={wellnessSlide3} alt="Jacuzzi" />
+          <img src={wellnessSlide4} alt="Wellness area" />
+        </section>
+
+        <section className="wellness-intro-section">
+          <div className="wellness-intro-content">
+            <h1>Spa Aurora</h1>
+
             <p>
-              Discover a calm hotel experience designed for rest, recovery and
-              comfort during your stay.
+              Welcome to our spacious spa, offering a calm and cozy atmosphere
+              where you can relax and unwind. Enjoy Beauté Pacifique’s exclusive
+              6-step ritual, included in your experience.
+            </p>
+
+            <p>
+              Soak in our warm Japanese pool and make use of the sauna, cold
+              plunge, foot bath, and jacuzzi. Complete your visit under the
+              soothing warmth of our sun lamps.
+            </p>
+
+            <p className="wellness-price">
+              Price: 375 SEK per person
+            </p>
+
+            <p>
+              Children aged 10–17 are welcome from 08:00–11:00 and 15:00–17:00
+              when accompanied by an adult.
             </p>
           </div>
         </section>
 
-        <section className="wellness-main-section">
-          <div className="wellness-intro">
-            <p className="wellness-cursive">A peaceful escape</p>
-            <h2>Take time for yourself</h2>
+        <section className="wellness-request-section">
+          <div className="wellness-request-content">
+            <h2>Visit Spa Aurora</h2>
+
             <p>
-              Our wellness area gives guests a quiet place to slow down. Enjoy
-              relaxing treatments, calm surroundings and spaces made for both
-              body and mind.
+              Would you like to visit Spa Aurora without staying at the hotel?
+              Send your request below and we’ll get back to you.
             </p>
-          </div>
 
-          <div className="wellness-card-grid">
-            <article className="wellness-card">
-              <img
-                src={massageImage}
-                alt="Relaxing hotel spa massage treatment"
-                className="wellness-card-image"
-              />
-
-              <div className="wellness-card-content">
-                <h3>Spa treatments</h3>
-                <p>
-                  Choose from relaxing treatments designed to help you unwind
-                  after travel, work or a long day in the city.
-                </p>
-              </div>
-            </article>
-
-            <article className="wellness-card">
-              <img
-                src={saunaImage}
-                alt="Warm hotel sauna and relaxation area"
-                className="wellness-card-image"
-              />
-
-              <div className="wellness-card-content">
-                <h3>Sauna & relaxation</h3>
-                <p>
-                  Enjoy warm, quiet spaces where you can reset and recover at
-                  your own pace.
-                </p>
-              </div>
-            </article>
-
-            <article className="wellness-card">
-              <img
-                src={gymImage}
-                alt="Hotel fitness and wellness area"
-                className="wellness-card-image"
-              />
-
-              <div className="wellness-card-content">
-                <h3>Fitness area</h3>
-                <p>
-                  Stay active during your visit with access to simple training
-                  equipment and wellness facilities.
-                </p>
-              </div>
-            </article>
+            <a href="mailto:spa@hotelaurora.se">
+              Send request
+            </a>
           </div>
         </section>
       </main>
 
       <Footer />
-    </div>
+    </>
   );
 }
 

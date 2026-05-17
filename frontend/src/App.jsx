@@ -14,6 +14,7 @@ import SuperiorRoom from "./pages/SuperiorRoom";
 import SuiteRoom from "./pages/SuiteRoom";
 import MeetingsEvents from "./pages/MeetingsEvents";
 import Wellness from "./pages/Wellness";
+import AdminTest from "./pages/AdminTest";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/rooms/suite" element={<SuiteRoom />} />
           <Route path="/meetings-events" element={<MeetingsEvents />} />
           <Route path="/wellness" element={<Wellness />} />
+          <Route path="/admin-test" element={<AdminTest />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
