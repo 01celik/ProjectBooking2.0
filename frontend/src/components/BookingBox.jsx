@@ -5,6 +5,8 @@ function BookingBox() {
   const [dateOpen, setDateOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
 
+  // Note: For a robust app, consider refactoring these to full ISO strings (e.g., "2026-05-06")
+  // so your backend can parse the dates reliably.
   const [checkIn, setCheckIn] = useState(6);
   const [checkOut, setCheckOut] = useState(7);
 
@@ -23,6 +25,60 @@ function BookingBox() {
       } else {
         setCheckIn(day);
       }
+    }
+  }
+
+  // New async function to handle the API submission
+  async function handleBookingSubmit() {
+    if (!checkIn || !checkOut) {
+      alert("Please select both check-in and check-out dates.");
+      return;
+    }
+
+    // 1. Properly pad the day numbers to match YYYY-MM-DD format (e.g., 6 becomes "06")
+    const formattedCheckIn = `2026-05-${String(checkIn).padStart(2, "0")}`;
+    const formattedCheckOut = `2026-05-${String(checkOut).padStart(2, "0")}`;
+
+    // 2. Combine adults and children
+    const noOfBedsRequired = adults + children;
+
+    // 3. Match the exact payload keys your backend body parsing expects
+    const requestBody = {
+      fromDate: formattedCheckIn, // e.g., "2026-05-06"
+      toDate: formattedCheckOut, // e.g., "2026-05-07"
+      noOfBedsRequired: noOfBedsRequired, // e.g., 2
+    };
+
+    try {
+      const response = await fetch(
+        "http://localhost:3000/rooms/getAvailableRoom",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Keeps your working session cookie attached
+          body: JSON.stringify(requestBody),
+        },
+      );
+
+      if (!response.ok) {
+        // If it still fails, let's see what the backend error message says
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `Server error: ${response.statusText}`,
+        );
+      }
+      const availableRoomsData = await response.json();
+      // ✅ FIX: Extract the actual array from .data before navigating
+      const roomsArray = availableRoomsData.data || [];
+      console.log(roomsArray);
+
+      // Pass the clean array down to the next route
+      navigate("/roomSelect", { state: { rooms: roomsArray } });
+    } catch (error) {
+      console.error("Booking error:", error);
+      alert(`Failed to fetch rooms: ${error.message}`);
     }
   }
 
@@ -64,10 +120,8 @@ function BookingBox() {
           </span>
         </button>
 
-        <button
-          className="book-button"
-          onClick={() => navigate("/booking")}
-        >
+        {/* Updated button to trigger the API call */}
+        <button className="book-button" onClick={handleBookingSubmit}>
           Book
         </button>
       </div>
@@ -148,14 +202,15 @@ function BookingBox() {
                 <span></span>
                 <span></span>
 
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31].map((day) => (
+                {[
+                  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                  19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+                ].map((day) => (
                   <button
                     key={day}
                     onClick={() => handleDateClick(day)}
                     className={
-                      day === checkIn || day === checkOut
-                        ? "selected-date"
-                        : ""
+                      day === checkIn || day === checkOut ? "selected-date" : ""
                     }
                   >
                     {day}
@@ -176,7 +231,10 @@ function BookingBox() {
                 <span>Sat</span>
                 <span>Sun</span>
 
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30].map((day) => (
+                {[
+                  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                  19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+                ].map((day) => (
                   <button key={day}>{day}</button>
                 ))}
               </div>

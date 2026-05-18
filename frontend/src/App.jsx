@@ -11,6 +11,7 @@ import PackagesOffers from "./pages/PackagesOffers";
 import Rooms from "./pages/Rooms";
 import SingleRoom from "./pages/SingleRoom";
 import SuperiorRoom from "./pages/SuperiorRoom";
+import RoomSelect from "./pages/RoomSelect/RoomSelect";
 import SuiteRoom from "./pages/SuiteRoom";
 import MeetingsEvents from "./pages/MeetingsEvents";
 import Wellness from "./pages/Wellness";
@@ -26,7 +27,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/joinnow" element={<JoinNow />} />
-          <Route path="/booking" element={<Booking />} />
+          <Route path="/roomSelect" element={<RoomSelect />} />
           <Route path="/packages-offers" element={<PackagesOffers />} />
           <Route path="/rooms" element={<Rooms />} />
           <Route path="/rooms/single" element={<SingleRoom />} />
