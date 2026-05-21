@@ -100,26 +100,34 @@
 
 /* ===== RESPONSIVE ===== */
 
+/* Jump straight from 3-col to 1-col — avoids the lone card in row 2 problem */
 @media (max-width: 1024px) {
-  .offers-hero h1 {
-    font-size: 40px;
-  }
-
   .offers-page {
     padding: 0 32px 80px;
   }
 
+  .offers-hero h1 {
+    font-size: 40px;
+  }
+
   .offers-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+    border-bottom: none;
   }
 
   .offer-card {
     padding: 0 28px 48px;
+    border-right: none;
+    border-bottom: 1px solid #d8d8d8;
+    min-height: unset;
   }
 
-  /* Remove border from rightmost card in each row */
-  .offer-card:nth-child(2n) {
-    border-right: none;
+  .offer-card:last-child {
+    border-bottom: none;
+  }
+
+  .offer-card h2 {
+    white-space: normal;
   }
 }
 
@@ -136,25 +144,12 @@
     font-size: 26px;
   }
 
-  .offers-grid {
-    grid-template-columns: 1fr;
-    border-bottom: none;
-  }
-
   .offer-card {
     padding: 0 0 36px;
-    border-right: none;
-    border-bottom: 1px solid #d8d8d8;
-    min-height: unset;
-  }
-
-  .offer-card:last-child {
-    border-bottom: none;
   }
 
   .offer-card h2 {
     font-size: 22px;
-    white-space: normal;
     margin: 20px 0 20px;
   }
 
