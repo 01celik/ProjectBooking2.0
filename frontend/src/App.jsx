@@ -5,20 +5,23 @@ import ScrollToTop from "./components/ScrollToTop";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Profile from "./pages/Profile";
 import JoinNow from "./pages/JoinNow";
 import Booking from "./pages/Booking";
 import PackagesOffers from "./pages/PackagesOffers";
 import Rooms from "./pages/Rooms";
 import SingleRoom from "./pages/SingleRoom";
 import SuperiorRoom from "./pages/SuperiorRoom";
-import RoomSelect from "./pages/RoomSelect/RoomSelect";
+import RoomSelect from "./pages/room-select/RoomSelect";
 import SuiteRoom from "./pages/SuiteRoom";
 import MeetingsEvents from "./pages/MeetingsEvents";
 import Wellness from "./pages/Wellness";
 import AdminTest from "./pages/AdminTest";
-import RoomSummary from "./pages/RoomSummary/RoomSummary";
-import BookingSuccess from "./pages/RoomSummary/BookingSuccess";
-import BookingFailed from "./pages/RoomSummary/BookingFailed";
+import RoomSummary from "./pages/room-summary/RoomSummary";
+import BookingSuccess from "./pages/room-summary/BookingSuccess";
+import BookingFailed from "./pages/room-summary/BookingFailed";
 
 function App() {
   return (
@@ -29,6 +32,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/joinnow" element={<JoinNow />} />
           <Route path="/roomSelect" element={<RoomSelect />} />
           <Route path="/packages-offers" element={<PackagesOffers />} />

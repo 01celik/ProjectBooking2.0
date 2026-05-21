@@ -1,52 +1,32 @@
 /**
- * ========== USER MODEL ==========
- * Database layer for user authentication operations
- * Handles signup, login, and password hashing
+ * ========== SUPABASE USER MODEL ==========
+ * Database layer for user authentication operations using Supabase
  */
 
-// Import the configured Supabase client
-const { supabase } = require("../db/supabase.js");
+// Assuming your supabase client is configured and exported from a file like '../db/supabaseClient'
+const { supabase } = require("../db/supabase");
 const bcrypt = require("bcrypt");
 
 /**
- * checkExistingEmail - Check if email already exists in database
- *
- * USED FOR: Registration form to prevent duplicate accounts
- * @param {string} email - Email address to check
- * @returns {array} Array of user records (empty if email not registered)
+ * checkExistingEmail - Check if email already exists in the user table
  */
 module.exports.checkExistingEmail = async (email) => {
   try {
     const { data, error } = await supabase
-      .from('user')
-      .select('*')
-      .eq('email', email);
+      .from("user")
+      .select("*")
+      .eq("email", email);
 
     if (error) throw error;
-    return data;
+    return data || [];
   } catch (error) {
-    console.log(error);
+    console.error("Error in checkExistingEmail:", error);
     throw error;
   }
 };
 
 /**
  * signUp - Register new user account
- *
- * FLOW:
- * 1. Hash password using bcrypt (12 rounds for security)
- * 2. Insert user record with hashed password 
- * 3. Fetch and return the newly created user record
- *
- * @param {string} firstName - User's first name
- * @param {string} lastName - User's last name
- * @param {string} birthDate - User's birthdate
- * @param {string} zipCode - User's zip code
- * @param {string} country - User's country
- * @param {string} phoneNumber - User's phone number
- * @param {string} email - User's email address (should be unique)
- * @param {string} password - Plain text password (will be hashed)
- * @returns {object} New user object
  */
 module.exports.signUp = async (
   firstName,
@@ -59,12 +39,10 @@ module.exports.signUp = async (
   password,
 ) => {
   try {
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Insert user and return the inserted row immediately using .select()
     const { data, error } = await supabase
-      .from('user')
+      .from("user")
       .insert([
         {
           firstName,
@@ -75,66 +53,198 @@ module.exports.signUp = async (
           phoneNumber,
           email,
           password: hashedPassword,
-        }
+        },
       ])
       .select()
-      .single(); // Returns an object instead of an array
+      .single(); // Returns the inserted object directly
 
     if (error) throw error;
 
+    // Explicitly delete the password from the returned object for security
+    if (data) delete data.password;
     return data;
   } catch (error) {
-    console.log(error);
+    console.error("Error in signUp:", error);
     throw error;
   }
 };
 
 /**
- * login - Authenticate user and return user data if credentials valid
- *
- * FLOW:
- * 1. Query database for user with matching email
- * 2. If user not found, return false immediately
- * 3. If user found, compare provided password with stored hash using bcrypt
- * 4. If password matches, remove password field and return user object
- * 5. If password doesn't match, return false
- *
- * @param {string} email - User's email address
- * @param {string} password - Plain text password to verify
- * @returns {object|false} User object if credentials valid, false otherwise
+ * login - Authenticate user and return public user data if credentials are valid
  */
 module.exports.login = async (email, password) => {
   try {
-    // Query user by email
     const { data: user, error } = await supabase
-      .from('user')
-      .select('*')
-      .eq('email', email)
-      .maybeSingle(); // Returns null safely instead of throwing an error if not found
+      .from("user")
+      .select("*")
+      .eq("email", email)
+      .maybeSingle(); // Returns null safely if no row matches
 
-    // If no user with this email exists, return false immediately
-    if (error || !user) {
-      return false;
-    }
+    if (error) throw error;
+    if (!user) return false;
 
-    /**
-     * Compare provided password with stored hash
-     * bcrypt.compare handles the hash comparison securely
-     * Returns boolean: true if match, false if no match
-     */
     const isValid = await bcrypt.compare(password, user.password);
-
     if (isValid) {
-      // Password is correct - remove sensitive data before returning
-      delete user.password;
-      return user;
+      return await module.exports.getPublicUserById(user.userId);
     }
 
-    // Password is incorrect
     return false;
   } catch (error) {
-    // Log internal errors without exposing to client
     console.error("Database error during login:", error);
     throw error;
   }
+};
+
+/**
+ * getPublicUserById - Fetch public profile fields without breaking on missing columns
+ */
+module.exports.getPublicUserById = async (userId) => {
+  try {
+    const { data: user, error } = await supabase
+      .from("user")
+      .select(
+        `
+        userId, firstName, lastName, birthDate, zipCode, country,
+        phoneNumber, email, role, profileImageUrl
+      `,
+      )
+      .eq("userId", userId)
+      .maybeSingle();
+
+    // Supabase handles missing columns safely, but if postgrest explicitly throws an error
+    // due to a completely missing column, it will hit the catch block below.
+    if (error) throw error;
+    if (!user) return null;
+
+    let pic = user.profileImageUrl;
+    if (pic == null || String(pic).trim() === "") {
+      pic = null;
+    } else {
+      pic = String(pic);
+    }
+    user.profileImageUrl = pic;
+
+    return user;
+  } catch (error) {
+    // Fallback if profileImageUrl column throws an unhandled system error
+    if (error.message && error.message.includes("profileImageUrl")) {
+      const { data: fallbackUser, error: fallbackError } = await supabase
+        .from("user")
+        .select(
+          `
+          userId, firstName, lastName, birthDate, zipCode, country,
+          phoneNumber, email, role
+        `,
+        )
+        .eq("userId", userId)
+        .maybeSingle();
+
+      if (fallbackError) throw fallbackError;
+      if (!fallbackUser) return null;
+
+      fallbackUser.profileImageUrl = null;
+      return fallbackUser;
+    }
+    throw error;
+  }
+};
+
+module.exports.findByEmailLoose = async (email) => {
+  // PostgREST doesn't inherently support direct inline mutations like LOWER(TRIM()) on filters.
+  // Instead, we can use Supabase's lower-level raw text filters to query cleanly.
+  const cleansedEmail = email.trim().toLowerCase();
+
+  const { data, error } = await supabase
+    .from("user")
+    .select("userId, email")
+    .ilike("email", cleansedEmail) // Case-insensitive matching
+    .maybeSingle();
+
+  if (error) throw error;
+  return data || null;
+};
+
+module.exports.setPasswordResetToken = async (userId, token, expiresAt) => {
+  const { error } = await supabase
+    .from("user")
+    .update({ passwordResetToken: token, passwordResetExpires: expiresAt })
+    .eq("userId", userId);
+
+  if (error) throw error;
+};
+
+module.exports.findByPasswordResetToken = async (token) => {
+  const { data, error } = await supabase
+    .from("user")
+    .select("userId, email, password, passwordResetExpires")
+    .eq("passwordResetToken", token)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data || null;
+};
+
+module.exports.clearPasswordResetToken = async (userId) => {
+  const { error } = await supabase
+    .from("user")
+    .update({ passwordResetToken: null, passwordResetExpires: null })
+    .eq("userId", userId);
+
+  if (error) throw error;
+};
+
+module.exports.updatePassword = async (userId, hashedPassword) => {
+  const { error } = await supabase
+    .from("user")
+    .update({ password: hashedPassword })
+    .eq("userId", userId);
+
+  if (error) throw error;
+};
+
+const PROFILE_IMAGE_MAX = 600000;
+
+module.exports.updateProfile = async (userId, fields) => {
+  const {
+    firstName,
+    lastName,
+    phoneNumber,
+    zipCode,
+    country,
+    birthDate,
+    profileImageUrl,
+  } = fields;
+
+  const updatePayload = {};
+
+  if (firstName !== undefined)
+    updatePayload.firstName = firstName?.trim() || null;
+  if (lastName !== undefined) updatePayload.lastName = lastName?.trim() || null;
+  if (phoneNumber !== undefined)
+    updatePayload.phoneNumber = phoneNumber?.trim() || null;
+  if (zipCode !== undefined) updatePayload.zipCode = zipCode?.trim() || null;
+  if (country !== undefined) updatePayload.country = country || null;
+  if (birthDate !== undefined) updatePayload.birthDate = birthDate || null;
+
+  if (profileImageUrl !== undefined) {
+    if (profileImageUrl && profileImageUrl.length > PROFILE_IMAGE_MAX) {
+      const err = new Error("PROFILE_IMAGE_TOO_LARGE");
+      err.code = "PROFILE_IMAGE_TOO_LARGE";
+      throw err;
+    }
+    updatePayload.profileImageUrl = profileImageUrl || null;
+  }
+
+  if (Object.keys(updatePayload).length === 0) {
+    return module.exports.getPublicUserById(userId);
+  }
+
+  const { error } = await supabase
+    .from("user")
+    .update(updatePayload)
+    .eq("userId", userId);
+
+  if (error) throw error;
+
+  return module.exports.getPublicUserById(userId);
 };
