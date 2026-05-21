@@ -2,8 +2,8 @@ require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_KEY);
 const dayjs = require("dayjs");
 const helperFunction = require("../utils/helperFunctions");
-const bookingModel = require("../model/bookings");
-const roomModel = require("../model/room");
+const bookingModel = require("../model/supaBookings");
+const roomModel = require("../model/supaRoom");
 const emailHelper = require("../utils/email");
 // Note: const { client } = require("../reddis"); has been completely removed.
 

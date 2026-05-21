@@ -1,6 +1,6 @@
 // ===== DEPENDENCIES =====
 const express = require("express");
-const db = require("./db/db");
+const { supabase } = require('./db/supabase.js');
 const cookie = require("cookie-parser");
 const helmet = require("helmet");
 const errorHandler = require("./middlewear/errorHandler");
@@ -47,6 +47,21 @@ app.use("/bookings", bookingRouter);
 // ===== HEALTH CHECK ROUTE =====
 app.get("/", (req, res) => {
   res.send("Hello");
+});
+
+app.get('/api/items', async (req, res) => {
+  // Query the 'items' table for all records
+  const { data, error } = await supabase
+    .from('items')
+    .select('*');
+
+  // If Supabase returns an error, send it to the client
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  // Otherwise, return the database rows
+  return res.json(data);
 });
 
 // ===== START SERVER =====//GLOBAL ERROR HANDLER

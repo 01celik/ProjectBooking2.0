@@ -7,7 +7,7 @@
  */
 
 const validator = require("validator");
-const userModel = require("../model/user");
+const userModel = require("../model/supaUser");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 

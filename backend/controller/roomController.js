@@ -5,7 +5,7 @@
  */
 
 const dayjs = require("dayjs");
-const roomModel = require("../model/room");
+const roomModel = require("../model/supaRoom");
 const helperFunction = require("../utils/helperFunctions");
 
 /**
