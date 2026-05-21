@@ -28,7 +28,7 @@ app.post(
 app.use(cookie()); // Parse cookies from requests
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true,
   }),
 );
@@ -67,6 +67,7 @@ app.get('/api/items', async (req, res) => {
 // ===== START SERVER =====//GLOBAL ERROR HANDLER
 app.use(errorHandler);
 
-app.listen(3000, () => {
-  console.log("http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
