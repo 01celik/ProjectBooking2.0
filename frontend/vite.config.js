@@ -21,6 +21,10 @@ export default defineConfig({
         target: "http://localhost:3000",
         changeOrigin: true,
       },
+      "/room-photos": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
     },
   },
 });
