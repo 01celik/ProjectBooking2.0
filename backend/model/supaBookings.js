@@ -224,3 +224,52 @@ module.exports.getAllBookings = async () => {
     throw error;
   }
 };
+
+/**
+ * updateBookingById - Update row fields inside the Supabase bookings table
+ * @param {string|number} bookingId - The ID of the reservation to update
+ * @param {object} updateData - Object containing roomNumber, fromDate, toDate, totalCost, status
+ * @returns {boolean} - Returns true if a row was updated, false otherwise
+ */
+module.exports.updateBookingById = async (bookingId, updateData) => {
+  try {
+    // Run update query on the target database row tracking item id
+    const { data, error } = await supabase
+      .from("bookings")
+      .update({
+        roomNumber: updateData.roomNumber,
+        fromDate: updateData.fromDate,
+        toDate: updateData.toDate,
+        totalCost: parseFloat(updateData.totalCost),
+        status: updateData.status
+      })
+      .eq("bookingId", bookingId); // Adjust property string name if database uses 'id'
+
+    if (error) throw error;
+    return true;
+  } catch (err) {
+    console.error("Database Error updating booking data records:", err.message);
+    throw err;
+  }
+};
+
+/**
+ * deleteBookingById - Delete a row from the Supabase bookings table
+ * @param {string|number} bookingId - The ID of the reservation to remove
+ * @returns {boolean} - Returns true if a row was deleted, false otherwise
+ */
+module.exports.deleteBookingById = async (bookingId) => {
+  try {
+    // Run deletion command statement targeted tracking matching id parameters
+    const { error } = await supabase
+      .from("bookings")
+      .delete()
+      .eq("bookingId", bookingId); // Adjust property string name if database uses 'id'
+
+    if (error) throw error;
+    return true;
+  } catch (err) {
+    console.error("Database Error removing booking data records:", err.message);
+    throw err;
+  }
+};

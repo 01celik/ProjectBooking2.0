@@ -58,4 +58,47 @@ bookingRouter.get(
   bookingController.cancelUserBooking,
 );
 
+/**
+ * =========================================================================
+ * GET /bookings/admin/allBookings
+ * Retrieve EVERY reservation in the database for the admin panel dashboard
+ *
+ * REQUIRES: JWT authentication AND Admin Role verification
+ *
+ * RESPONSE: Array of all customer bookings with joined user and room details
+ * =========================================================================
+ */
+bookingRouter.get(
+  "/admin/allBookings",
+  authMiddleWear.isAdmin, // CRITICAL: Middleware to ensure the user is an admin
+  bookingController.getAllReservations // Controller function to fetch all database records
+);
+
+/**
+ * PUT /bookings/admin/update/:bookingId
+ * Update an existing reservation record directly from the admin panel
+ *
+ * REQUIRES: JWT authentication AND Admin Role verification
+ * URL PARAMS: bookingId - The ID of the reservation to update
+ * REQUEST BODY: roomNumber, fromDate, toDate, totalCost, status
+ */
+bookingRouter.put(
+  "/admin/update/:bookingId",
+  authMiddleWear.isAdmin, // Protects endpoint from regular users
+  bookingController.updateReservation
+);
+
+/**
+ * DELETE /bookings/admin/delete/:bookingId
+ * Hard delete a reservation record from the database
+ *
+ * REQUIRES: JWT authentication AND Admin Role verification
+ * URL PARAMS: bookingId - The ID of the reservation to remove
+ */
+bookingRouter.delete(
+  "/admin/delete/:bookingId",
+  authMiddleWear.isAdmin, // Protects endpoint from regular users
+  bookingController.deleteReservation
+);
+
 module.exports = bookingRouter;

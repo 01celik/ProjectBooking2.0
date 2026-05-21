@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"; // Pull route handling links
 import "../styles/AdminSidebar.css";
 import hotelImage from "../assets/grid4.jpg";
 
@@ -11,18 +12,18 @@ function AdminSidebar() {
         </div>
 
         <nav className="admin-sidebar-nav">
-          <a href="#">Dashboard</a>
-          <a href="#">Reservations</a>
-          <a href="#">Guests</a>
-          <a href="#">Rooms</a>
-          <a href="#">Messages</a>
-          <a href="#">Settings</a>
+          {/* Use proper, semantic route linking layout paths */}
+          <Link to="/admin">Dashboard</Link>
+          <Link to="/admin/reservations">Reservations</Link>
+          <Link to="/admin/guests">Guests</Link>
+          <Link to="/admin/rooms">Rooms</Link>
+          <Link to="/admin/messages">Messages</Link>
+          <Link to="/admin/settings">Settings</Link>
         </nav>
       </div>
 
       <div className="admin-hotel-card">
         <img src={hotelImage} alt="Aurora Hotel" />
-
         <div className="admin-hotel-info">
           <h3>Aurora Hotel</h3>
           <p>Södra Blasieholmshamnen 2</p>
@@ -34,4 +35,3 @@ function AdminSidebar() {
 }
 
 export default AdminSidebar;
-

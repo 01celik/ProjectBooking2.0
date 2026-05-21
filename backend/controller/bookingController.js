@@ -237,3 +237,108 @@ module.exports.cancelUserBooking = async (req, res, next) => {
     next(error);
   }
 };
+/**
+ * getAllReservations - Retrieve ALL bookings across all customers for admin dashboard
+ */
+module.exports.getAllReservations = async (req, res, next) => {
+  try {
+    // 1. Fetch all bookings using your model layer
+    const allBookings = await bookingModel.getAllBookings();
+
+    // 2. Check if the model returned false (no bookings found or empty table)
+    if (allBookings === false) {
+      return res.status(200).json({
+        success: true,
+        message: "NO BOOKINGS FOUND IN SYSTEM",
+        data: [], // Returning an empty array makes it easier for the frontend to map
+      });
+    } else {
+      // 3. Return the full reservation data array back to the admin panel
+      return res.status(200).json({
+        success: true,
+        message: "ALL BOOKINGS FOUND",
+        count: allBookings.length,
+        data: allBookings,
+      });
+    }
+  } catch (error) {
+    // 4. Log the error and pass it to your Express global error handler middleware
+    console.log(error);
+    next(error);
+  }
+};
+
+/**
+ * updateReservation - Modify an existing reservation's parameters via Admin Action
+ */
+module.exports.updateReservation = async (req, res, next) => {
+  try {
+    const { bookingId } = req.params;
+    const { roomNumber, fromDate, toDate, totalCost, status } = req.body;
+
+    if (!bookingId) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing reservation item target tracker ID parameter.",
+      });
+    }
+
+    // Pass data payload configuration properties down into model
+    const isUpdated = await bookingModel.updateBookingById(bookingId, {
+      roomNumber,
+      fromDate,
+      toDate,
+      totalCost,
+      status,
+    });
+
+    if (!isUpdated) {
+      return res.status(404).json({
+        success: false,
+        message: "No reservation record matched target update parameter conditions.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Reservation record updated successfully.",
+    });
+  } catch (error) {
+    console.error("Admin Update Controller Error:", error);
+    next(error);
+  }
+};
+
+/**
+ * deleteReservation - Hard erase a reservation logging entry via Admin Action
+ */
+module.exports.deleteReservation = async (req, res, next) => {
+  try {
+    const { bookingId } = req.params;
+
+    if (!bookingId) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing reservation item target tracker ID parameter.",
+      });
+    }
+
+    // Call deletion task wrapper within model database layer
+    const isDeleted = await bookingModel.deleteBookingById(bookingId);
+
+    if (!isDeleted) {
+      return res.status(404).json({
+        success: false,
+        message: "No reservation record matched target removal execution requirements.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Reservation record purged from system database successfully.",
+    });
+  } catch (error) {
+    console.error("Admin Delete Controller Error:", error);
+    next(error);
+  }
+};
