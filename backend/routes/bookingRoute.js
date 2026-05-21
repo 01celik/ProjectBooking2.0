@@ -8,7 +8,7 @@
 const express = require("express");
 const bookingRouter = express.Router();
 const bookingController = require("../controller/bookingController");
-const authMiddleWear = require("../middlewear/authMiddleWear");
+const authMiddleWear = require("../middlewear/AuthMiddlewear");
 
 // ===== APPLY AUTHENTICATION MIDDLEWARE TO ALL ROUTES =====
 // All booking routes require valid JWT token

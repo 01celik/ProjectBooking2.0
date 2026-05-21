@@ -6,7 +6,7 @@
 
 const express = require("express");
 const roomRouter = express.Router();
-const authMiddlewear = require("../middlewear/authMiddleWear");
+const authMiddlewear = require("../middlewear/AuthMiddlewear");
 const roomController = require("../controller/roomController");
 
 // ===== APPLY AUTHENTICATION MIDDLEWARE TO ALL ROUTES =====
