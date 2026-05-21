@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext"; // Adjust path to your setup
+import { useAuth } from "../../context/AuthContext";
+import "../../styles/room-summary.css";
 
 function RoomSummary() {
   const location = useLocation();
@@ -284,14 +285,15 @@ function RoomSummary() {
   };
 
   return (
-    <div style={styles.pageWrapper}>
+    <div style={styles.pageWrapper} className="summary-page">
       <h1 style={styles.header}>Review your reservation</h1>
 
-      <div style={styles.splitLayout}>
+      <div style={styles.splitLayout} className="summary-split">
         <div style={styles.leftColumn}>
           <div>
             <h2 style={styles.sectionTitle}>1. Guest Contact</h2>
             <div
+              className="summary-guest-grid"
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr 1fr",
@@ -410,7 +412,7 @@ function RoomSummary() {
           )}
         </div>
 
-        <div style={styles.rightColumn}>
+        <div style={styles.rightColumn} className="summary-right-col">
           <div style={styles.imageContainer}>
             <img
               src={

@@ -1,0 +1,24 @@
+/* Room Summary / Booking Review page — responsive overrides for inline-styled layout */
+
+@media (max-width: 900px) {
+  .summary-split {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  /* Move the sticky summary card to normal flow on mobile */
+  .summary-right-col {
+    position: static !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .summary-page {
+    padding: 30px 16px !important;
+  }
+
+  .summary-guest-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}
