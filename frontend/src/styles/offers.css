@@ -97,3 +97,77 @@
   margin-top: auto !important;
   padding-top: 40px;
 }
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 1024px) {
+  .offers-hero h1 {
+    font-size: 40px;
+  }
+
+  .offers-page {
+    padding: 0 32px 80px;
+  }
+
+  .offers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .offer-card {
+    padding: 0 28px 48px;
+  }
+
+  /* Remove border from rightmost card in each row */
+  .offer-card:nth-child(2n) {
+    border-right: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .offers-page {
+    padding: 0 16px 60px;
+  }
+
+  .offers-hero {
+    padding: 36px 8px 48px;
+  }
+
+  .offers-hero h1 {
+    font-size: 26px;
+  }
+
+  .offers-grid {
+    grid-template-columns: 1fr;
+    border-bottom: none;
+  }
+
+  .offer-card {
+    padding: 0 0 36px;
+    border-right: none;
+    border-bottom: 1px solid #d8d8d8;
+    min-height: unset;
+  }
+
+  .offer-card:last-child {
+    border-bottom: none;
+  }
+
+  .offer-card h2 {
+    font-size: 22px;
+    white-space: normal;
+    margin: 20px 0 20px;
+  }
+
+  .offer-card img {
+    height: 220px;
+    margin-bottom: 28px;
+  }
+
+  .offer-card p {
+    font-size: 15px;
+  }
+
+  .offer-book {
+    padding-top: 24px;
+  }
+}
