@@ -5,41 +5,35 @@ const helperFunction = require("../utils/helperFunctions");
 const bookingModel = require("../model/supaBookings");
 const roomModel = require("../model/supaRoom");
 const emailHelper = require("../utils/email");
-// Note: const { client } = require("../reddis"); has been completely removed.
 
 /**
  * ========== BOOKING CONTROLLER ==========
  * Handles all booking-related operations:
- * - Initiating new bookings (checking availability inside a DB transaction, creating Stripe session)
+ * - Initiating new bookings (checking availability, creating Stripe session)
  * - Processing Stripe webhook payments
  * - Fetching user bookings
  * - Cancelling bookings
  *
  * KEY CONCEPTS:
- * 1. Database Transactions: Prevents race conditions by locking overlapping records during verification.
+ * 1. Supabase API Integration: Replaced local transactional locks with Supabase queries.
  * 2. Booking States: pending → confirmed (after payment) OR cancelled
  * 3. Stripe Integration: Delegates payment processing, confirms on webhook
  */
 
 /**
- * initiateBooking - Start booking process for a room using DB transactions
+ * initiateBooking - Start booking process for a room
  *
  * FLOW:
- * 1. Start a database transaction.
- * 2. Validate dates (not past, proper format).
- * 3. Check room availability inside the transaction using row-level locking (e.g., SELECT FOR UPDATE).
- * 4. Calculate total cost (pricePerNight * number of nights).
- * 5. Create booking record in DB with 'pending' status.
- * 6. Commit the transaction (releasing the database lock).
- * 7. Generate Stripe checkout session.
- * 8. Return Stripe payment URL to client.
+ * 1. Validate dates (not past, proper format).
+ * 2. Check room availability inside Supabase (verifies against confirmed or active pendings).
+ * 3. Calculate total cost (pricePerNight * number of nights).
+ * 4. Create booking record in DB with 'pending' status.
+ * 5. Generate Stripe checkout session.
+ * 6. Return Stripe payment URL to client.
  */
 module.exports.initiateBooking = async (req, res, next) => {
   const { roomNumber, fromDate, toDate } = req.body;
   const user = req.user;
-
-  // Initialize a transaction variable so it can be managed across try/catch/finally blocks
-  let transaction;
 
   try {
     const startDate = dayjs(fromDate);
@@ -56,28 +50,15 @@ module.exports.initiateBooking = async (req, res, next) => {
         .json({ success: false, message: checkDates.message });
     }
 
-    // ===== STEP 2: START TRANSACTION & CHECK AVAILABILITY =====
-    // Start the database transaction context
-    transaction = await bookingModel.startTransaction();
-
-    /**
-     * DATABASE LOCK MECHANISM - Prevent Overselling
-     * The checkAvailability method must execute a query using a pessimistic lock,
-     * for example: "SELECT * FROM bookings WHERE room_id = ? AND ... FOR UPDATE"
-     *
-     * This forces concurrent execution blocks matching the same room criteria to
-     * wait sequentially until this transaction completes.
-     */
+    // ===== STEP 2: CHECK AVAILABILITY =====
     const checkAvailability = await bookingModel.checkAvailabilitySecure(
       roomNumber,
       dbStartDate,
       dbEndDate,
-      transaction,
     );
 
     // If room is unavailable for these dates, abort early
     if (!checkAvailability) {
-      await bookingModel.rollbackTransaction(transaction);
       return res
         .status(400)
         .json({ success: false, message: "ROOM ALREADY BOOKED OR PENDING" });
@@ -88,7 +69,6 @@ module.exports.initiateBooking = async (req, res, next) => {
     // ===== STEP 3: GET ROOM DETAILS & CALCULATE COST =====
     const roomDetails = await roomModel.getRoomDetails(roomNumber);
     if (!roomDetails) {
-      await bookingModel.rollbackTransaction(transaction);
       return res.status(404).json({
         success: false,
         message: "Room not found",
@@ -100,23 +80,15 @@ module.exports.initiateBooking = async (req, res, next) => {
     const totalCost = roomCost * nights;
 
     // ===== STEP 4: CREATE BOOKING RECORD IN DATABASE =====
-    // Pass the transaction context so the insert is locked down until committed
     const newBookingId = await bookingModel.createNewBookingSecure(
       user.userId,
       roomNumber,
       dbStartDate,
       dbEndDate,
       totalCost,
-      transaction,
     );
 
-    // ===== STEP 5: COMMIT TRANSACTION =====
-    // Commit early right before calling the external Stripe API.
-    // This frees up the DB lock immediately so other users aren't left waiting on network calls.
-    await bookingModel.commitTransaction(transaction);
-    transaction = null; // Mark as cleared so finally block doesn't attempt a rollback
-
-    // ===== STEP 6: CREATE STRIPE CHECKOUT SESSION =====
+    // ===== STEP 5: CREATE STRIPE CHECKOUT SESSION =====
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       success_url:
@@ -148,14 +120,6 @@ module.exports.initiateBooking = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
-    // If an error happens while the transaction is active, roll it back
-    if (transaction) {
-      try {
-        await bookingModel.rollbackTransaction(transaction);
-      } catch (rollbackError) {
-        console.error("Failed to rollback transaction:", rollbackError);
-      }
-    }
     next(error);
   }
 };
