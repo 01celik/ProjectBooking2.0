@@ -144,3 +144,60 @@
 .wellness-request-content a:hover {
   background: var(--primary-text);
 }
+
+@media (max-width: 768px) {
+  .wellness-slideshow {
+    height: 380px;
+  }
+
+  .wellness-intro-section {
+    padding: 64px 20px;
+  }
+
+  .wellness-intro-content h1 {
+    font-size: 36px;
+    margin-bottom: 24px;
+  }
+
+  .wellness-intro-content p {
+    font-size: 16px;
+  }
+
+  .wellness-price {
+    font-size: 17px !important;
+  }
+
+  .wellness-request-section {
+    padding: 64px 20px;
+  }
+
+  .wellness-request-content h2 {
+    font-size: 28px;
+  }
+
+  .wellness-request-content p {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .wellness-slideshow {
+    height: 260px;
+  }
+
+  .wellness-intro-section {
+    padding: 48px 16px;
+  }
+
+  .wellness-intro-content h1 {
+    font-size: 28px;
+  }
+
+  .wellness-request-section {
+    padding: 48px 16px;
+  }
+
+  .wellness-request-content h2 {
+    font-size: 22px;
+  }
+}
