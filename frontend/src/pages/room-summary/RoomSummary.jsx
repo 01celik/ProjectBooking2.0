@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "../../styles/room-summary.css";
+import { API_BASE } from "../../config/api";
 
 function RoomSummary() {
   const location = useLocation();
@@ -155,7 +156,7 @@ function RoomSummary() {
 
     try {
       // Replace URL with your correct backend target API environment address
-      const response = await fetch("/bookings/initiate", {
+      const response = await fetch(`${API_BASE}/bookings/initiate`, {
         credentials: "include",
         method: "POST",
         headers: {

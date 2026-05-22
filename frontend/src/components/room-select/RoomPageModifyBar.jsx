@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/pages/room-select/room-select.css";
+import { API_BASE } from "../../config/api";
 
 export default function RoomPageModifyBar() {
   const [activePopup, setActivePopup] = useState(null);
@@ -91,7 +92,7 @@ export default function RoomPageModifyBar() {
 
     try {
       const response = await fetch(
-        "/rooms/getAvailableRoom",
+        `${API_BASE}/rooms/getAvailableRoom`,
         {
           method: "POST",
           headers: {

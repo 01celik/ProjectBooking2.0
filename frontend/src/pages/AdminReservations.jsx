@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AdminSidebar from "../components/AdminSidebar";
 import "../styles/AdminReservations.css";
+import { API_BASE } from "../config/api";
 
 function AdminReservations() {
   const [reservations, setReservations] = useState([]);
@@ -25,7 +26,7 @@ function AdminReservations() {
   const fetchAllReservations = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/bookings/admin/allBookings", {
+      const response = await fetch(`${API_BASE}/bookings/admin/allBookings`, {
         method: "GET",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
