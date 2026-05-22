@@ -416,7 +416,7 @@ function RoomSummary() {
         <div style={styles.rightColumn} className="summary-right-col">
           <div style={styles.imageContainer}>
             <img
-              src={room.image_url || "/placeholder-image.jpg"}
+              src={room.image_url ? `${API_BASE}${room.image_url}` : "/placeholder-image.jpg"}
               alt={room.type}
               style={styles.roomImage}
             />

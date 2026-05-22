@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../../config/api";
 
 const RoomCard = ({ room, totalGuests, fromDate, toDate }) => {
   if (!room) return null;
@@ -29,7 +30,7 @@ const RoomCard = ({ room, totalGuests, fromDate, toDate }) => {
         <img
           src={
             room.image_url
-              ? `http://localhost:3000${room.image_url}`
+              ? `${API_BASE}${room.image_url}`
               : "/placeholder-image.jpg"
           }
           alt={`Room ${room.roomNumber}`}
