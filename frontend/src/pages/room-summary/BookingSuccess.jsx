@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { API_BASE } from "../../config/api";
 
 function BookingSuccess() {
   const [searchParams] = useSearchParams();
@@ -15,7 +16,7 @@ function BookingSuccess() {
       return;
     }
 
-    fetch(`/bookings/confirm-session/${sessionId}`, { credentials: "include" })
+    fetch(`${API_BASE}/bookings/confirm-session/${sessionId}`, { credentials: "include" })
       .finally(() => {
         setLoading(false);
         const timer = setTimeout(() => navigate("/my-bookings"), 3000);

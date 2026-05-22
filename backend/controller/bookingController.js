@@ -92,8 +92,8 @@ module.exports.initiateBooking = async (req, res, next) => {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       success_url:
-        "http://localhost:5173/booking-success?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: "http://localhost:5173/booking-failed",
+        `${(process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "")}/booking-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${(process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "")}/booking-failed`,
       metadata: {
         bookingId: newBookingId.toString(),
       },
