@@ -81,3 +81,36 @@
   font-size: 14px;
   line-height: 1.5;
 }
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.admin-content {
+  flex: 1;
+  width: 100%;
+  padding: 32px;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.admin-logout-btn {
+  width: 100%;
+  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: 0.2s ease;
+}
+
+.admin-logout-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}

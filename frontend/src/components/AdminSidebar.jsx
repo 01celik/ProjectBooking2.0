@@ -1,8 +1,27 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import hotelImage from "../assets/grid4.jpg";
+import { useAuth } from "../context/AuthContext";
+import { API_BASE } from "../config/api";
 import "../styles/AdminSidebar.css";
 
 function AdminSidebar() {
+  const navigate = useNavigate();
+  const { setUser } = useAuth();
+
+  async function handleLogout() {
+    try {
+      await fetch(`${API_BASE}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setUser(null);
+      navigate("/login");
+    }
+  }
+
   return (
     <aside className="admin-sidebar">
       <div>
@@ -12,39 +31,26 @@ function AdminSidebar() {
         </div>
 
         <nav className="admin-sidebar-nav">
-          <NavLink to="/admin-test" end>
-            Dashboard
-          </NavLink>
-
-          <NavLink to="/admin-test/reservations">
-            Reservations
-          </NavLink>
-
-          <NavLink to="/admin-test/users">
-            Users
-          </NavLink>
-
-          <NavLink to="/admin-test/rooms">
-            Rooms
-          </NavLink>
-
-          <NavLink to="/admin-test/messages">
-            Messages
-          </NavLink>
-
-          <NavLink to="/admin-test/settings">
-            Settings
-          </NavLink>
+          <NavLink to="/admin/dashboard">Dashboard</NavLink>
+          <NavLink to="/admin/reservations">Reservations</NavLink>
+          <NavLink to="/admin/users">Users</NavLink>
+          <NavLink to="/admin/rooms">Rooms</NavLink>
         </nav>
       </div>
 
-      <div className="admin-hotel-card">
-        <img src={hotelImage} alt="Aurora Hotel" />
+      <div>
+        <button className="admin-logout-btn" onClick={handleLogout}>
+          Logout
+        </button>
 
-        <div className="admin-hotel-info">
-          <h3>Aurora Hotel</h3>
-          <p>Södra Blasieholmshamnen 2</p>
-          <p>111 48 Stockholm</p>
+        <div className="admin-hotel-card">
+          <img src={hotelImage} alt="Aurora Hotel" />
+
+          <div className="admin-hotel-info">
+            <h3>Aurora Hotel</h3>
+            <p>Södra Blasieholmshamnen 2</p>
+            <p>111 48 Stockholm</p>
+          </div>
         </div>
       </div>
     </aside>
