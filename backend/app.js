@@ -13,6 +13,7 @@ const path = require("path");
 const authRouter = require("./routes/authRoute");
 const roomRouter = require("./routes/roomRoute");
 const bookingRouter = require("./routes/bookingRoute");
+const adminRouter = require("./routes/adminRoute");
 
 // ===== INITIALIZE EXPRESS APP =====
 const app = express();
@@ -43,6 +44,7 @@ app.use(
 app.use("/auth", authRouter);
 app.use("/rooms", roomRouter);
 app.use("/bookings", bookingRouter);
+app.use("/admin", adminRouter);
 
 // ===== HEALTH CHECK ROUTE =====
 app.get("/", (req, res) => {
@@ -67,7 +69,6 @@ app.get('/api/items', async (req, res) => {
 // ===== START SERVER =====//GLOBAL ERROR HANDLER
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(3000, () => {
+  console.log("http://localhost:3000");
 });
