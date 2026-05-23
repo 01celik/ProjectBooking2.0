@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom"; // Pull route handling links
-import "../styles/AdminSidebar.css";
+import { NavLink } from "react-router-dom";
 import hotelImage from "../assets/grid4.jpg";
+import "../styles/AdminSidebar.css";
 
 function AdminSidebar() {
   return (
@@ -12,18 +12,35 @@ function AdminSidebar() {
         </div>
 
         <nav className="admin-sidebar-nav">
-          {/* Use proper, semantic route linking layout paths */}
-          <Link to="/admin">Dashboard</Link>
-          <Link to="/admin/reservations">Reservations</Link>
-          <Link to="/admin/guests">Guests</Link>
-          <Link to="/admin/rooms">Rooms</Link>
-          <Link to="/admin/messages">Messages</Link>
-          <Link to="/admin/settings">Settings</Link>
+          <NavLink to="/admin-test" end>
+            Dashboard
+          </NavLink>
+
+          <NavLink to="/admin-test/reservations">
+            Reservations
+          </NavLink>
+
+          <NavLink to="/admin-test/users">
+            Users
+          </NavLink>
+
+          <NavLink to="/admin-test/rooms">
+            Rooms
+          </NavLink>
+
+          <NavLink to="/admin-test/messages">
+            Messages
+          </NavLink>
+
+          <NavLink to="/admin-test/settings">
+            Settings
+          </NavLink>
         </nav>
       </div>
 
       <div className="admin-hotel-card">
         <img src={hotelImage} alt="Aurora Hotel" />
+
         <div className="admin-hotel-info">
           <h3>Aurora Hotel</h3>
           <p>Södra Blasieholmshamnen 2</p>
