@@ -20,10 +20,16 @@ import MeetingsEvents from "./pages/MeetingsEvents";
 import Wellness from "./pages/Wellness";
 import AdminTest from "./pages/AdminTest";
 import AdminReservations from "./pages/AdminReservations";
+import AdminLayout from "./pages/AdminLayout";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminUsers from "./pages/AdminUsers";
 import RoomSummary from "./pages/room-summary/RoomSummary";
 import BookingSuccess from "./pages/room-summary/BookingSuccess";
 import BookingFailed from "./pages/room-summary/BookingFailed";
 import MyBookings from "./pages/MyBookings";
+import RestaurantBar from "./pages/RestaurantBar";
+import AboutUs from "./pages/AboutUs";
+
 
 function App() {
   return (
@@ -48,10 +54,16 @@ function App() {
           <Route path="/wellness" element={<Wellness />} />
           <Route path="/admin-test" element={<AdminTest />} />
           <Route path="/admin/reservations" element={<AdminReservations />} />
+          <Route path="/admin" element={<AdminLayout />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/booking/summary" element={<RoomSummary />} />
           <Route path="/booking-success" element={<BookingSuccess />} />
           <Route path="/booking-failed" element={<BookingFailed />} />
           <Route path="/my-bookings" element={<MyBookings />} />
+          <Route path="/restaurant-bar" element={<RestaurantBar />} />
+          <Route path="/about" element={<AboutUs />} />
+
         </Routes>
       </BrowserRouter>
     </AuthProvider>
