@@ -26,7 +26,17 @@ app.post(
 
 // ===== MIDDLEWARE STACK =====
 // Set security HTTP headers
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        imgSrc: ["'self'", "data:", "https:"],
+      },
+    },
+  })
+);
 app.use(cookie()); // Parse cookies from requests
 app.use(
   cors({
