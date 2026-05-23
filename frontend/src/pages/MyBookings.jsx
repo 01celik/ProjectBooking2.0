@@ -99,7 +99,9 @@ function BookingCard({ booking, onCancel }) {
               {booking.roomNumber}
             </p>
           </div>
-          <p className="mb-total">${booking.totalCost.toFixed(2)}</p>
+          <p className="mb-total">
+            {Number(booking.totalCost || 0).toLocaleString()} SEK
+          </p>
         </div>
 
         <div className="mb-dates-row">

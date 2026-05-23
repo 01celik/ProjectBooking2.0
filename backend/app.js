@@ -87,27 +87,3 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-
-app.get("/debug/bookings", async (req, res) => {
-  const { data, error } = await supabase
-    .from("booking")
-    .select("*");
-
-  res.json({ data, error });
-});
-
-app.get("/debug/rooms", async (req, res) => {
-  const { data, error } = await supabase
-    .from("room")
-    .select("*");
-
-  res.json({ data, error });
-});
-
-app.get("/debug/users", async (req, res) => {
-  const { data, error } = await supabase
-    .from("user")
-    .select("*");
-
-  res.json({ data, error });
-});
