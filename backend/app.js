@@ -30,7 +30,7 @@ app.use(helmet());
 app.use(cookie()); // Parse cookies from requests
 app.use(
   cors({
-    origin: (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, ""),
+    origin: true,
     credentials: true,
   }),
 );
