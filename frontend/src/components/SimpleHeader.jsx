@@ -9,7 +9,7 @@ function SimpleHeader() {
       </Link>
 
       <Link to="/" className="simple-logo">
-        Hotel
+        Aurora
       </Link>
 
       <div className="simple-empty"></div>

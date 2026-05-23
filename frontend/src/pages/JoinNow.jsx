@@ -78,7 +78,7 @@ function JoinNow() {
           <div className="join-form-section">
             <div className="join-form-intro">
               <p className="join-cursive">Let&apos;s be friends!</p>
-              <h1>Join Hotel Friends</h1>
+              <h1>Join Aurora Friends</h1>
               <p>
                 Create your account to get member offers, faster booking and
                 special hotel rewards.
@@ -229,7 +229,7 @@ function JoinNow() {
                 type="submit"
                 disabled={isLoading}
               >
-                {isLoading ? "Creating account..." : "Join Hotel Friends"}
+                {isLoading ? "Creating account..." : "Join Aurora Friends"}
               </button>
             </form>
           </div>

@@ -11,7 +11,7 @@ function Header() {
   return (
     <header className="header">
       <Link to="/" className="header-brand">
-        Hotel
+        Aurora
       </Link>
 
       <Navbar isOpen={menuOpen} onClose={() => setMenuOpen(false)} />

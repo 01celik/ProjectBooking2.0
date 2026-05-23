@@ -26,6 +26,7 @@ app.post(
 
 // ===== MIDDLEWARE STACK =====
 // Set security HTTP headers
+app.use(helmet());
 app.use(cookie()); // Parse cookies from requests
 app.use(
   cors({
@@ -69,6 +70,33 @@ app.get('/api/items', async (req, res) => {
 // ===== START SERVER =====//GLOBAL ERROR HANDLER
 app.use(errorHandler);
 
-app.listen(3000, () => {
-  console.log("http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+
+app.get("/debug/bookings", async (req, res) => {
+  const { data, error } = await supabase
+    .from("booking")
+    .select("*");
+
+  res.json({ data, error });
+});
+
+app.get("/debug/rooms", async (req, res) => {
+  const { data, error } = await supabase
+    .from("room")
+    .select("*");
+
+  res.json({ data, error });
+});
+
+app.get("/debug/users", async (req, res) => {
+  const { data, error } = await supabase
+    .from("user")
+    .select("*");
+
+  res.json({ data, error });
 });

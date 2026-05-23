@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/pages/room-select/room-select.css";
 import { API_BASE } from "../../config/api";
 
-export default function RoomPageModifyBar() {
+export default function RoomPageModifyBar({ fromDate, toDate, totalGuests }) {
   const [activePopup, setActivePopup] = useState(null);
 
-  const [checkIn, setCheckIn] = useState("2026-05-06");
-  const [checkOut, setCheckOut] = useState("2026-05-07");
+  const [checkIn, setCheckIn] = useState(fromDate);
+  const [checkOut, setCheckOut] = useState(toDate);
 
-  const [adults, setAdults] = useState(1);
+  const [adults, setAdults] = useState(totalGuests || 1);
   const [children, setChildren] = useState(0);
   const [rooms, setRooms] = useState(1);
 

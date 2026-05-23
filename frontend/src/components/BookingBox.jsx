@@ -6,8 +6,15 @@ function BookingBox() {
   const [dateOpen, setDateOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
 
-  const [checkIn, setCheckIn] = useState("2026-05-06");
-  const [checkOut, setCheckOut] = useState("2026-05-07");
+  const today = new Date();
+  const tomorrow = new Date();
+  tomorrow.setDate(today.getDate() + 1);
+
+  const todayString = today.toISOString().split("T")[0];
+  const tomorrowString = tomorrow.toISOString().split("T")[0];
+
+  const [checkIn, setCheckIn] = useState(todayString);
+  const [checkOut, setCheckOut] = useState(tomorrowString);
 
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
@@ -16,8 +23,8 @@ function BookingBox() {
 
   const [monthOffset, setMonthOffset] = useState(0);
 
-  const BASE_YEAR = 2026;
-  const BASE_MONTH = 5; // May
+  const BASE_YEAR = today.getFullYear();
+  const BASE_MONTH = today.getMonth() + 1;
 
   function getMonthData(year, month) {
     const days = new Date(year, month, 0).getDate();

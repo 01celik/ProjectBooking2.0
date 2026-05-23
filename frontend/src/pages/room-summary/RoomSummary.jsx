@@ -500,7 +500,7 @@ function RoomSummary() {
               >
                 <strong style={{ fontSize: "13px" }}>Total</strong>
                 <span style={{ fontSize: "15px", fontWeight: "600" }}>
-                  €{totalPrice}
+                  SEK{totalPrice}
                 </span>
               </div>
             </div>
@@ -543,7 +543,7 @@ function RoomSummary() {
                   fontSize: "15px",
                 }}
               >
-                €{room.pricePerNight}
+                SEK{room.pricePerNight}
               </span>
             </div>
 
@@ -572,7 +572,7 @@ function RoomSummary() {
                   lineHeight: "1",
                 }}
               >
-                €{memberPrice}
+                SEK{memberPrice}
                 <small
                   style={{
                     fontSize: "13px",

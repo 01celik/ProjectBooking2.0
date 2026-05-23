@@ -85,3 +85,71 @@ module.exports.getAllAvailableRoom = async (req, res, next) => {
     next(error);
   }
 };
+/**
+ * ADMIN: Get all rooms
+ */
+module.exports.getAllRooms = async (req, res, next) => {
+  try {
+    const rooms = await roomModel.getAllRooms();
+
+    return res.status(200).json({
+      success: true,
+      data: rooms,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * ADMIN: Create room
+ */
+module.exports.createRoom = async (req, res, next) => {
+  try {
+    const result = await roomModel.createRoom(req.body);
+
+    return res.status(201).json({
+      success: true,
+      message: "ROOM CREATED",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * ADMIN: Update room
+ */
+module.exports.updateRoom = async (req, res, next) => {
+  try {
+    const result = await roomModel.updateRoom(
+      req.params.roomNumber,
+      req.body
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "ROOM UPDATED",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * ADMIN: Delete room
+ */
+module.exports.deleteRoom = async (req, res, next) => {
+  try {
+    await roomModel.deleteRoom(req.params.roomNumber);
+
+    return res.status(200).json({
+      success: true,
+      message: "ROOM DELETED",
+    });
+  } catch (error) {
+    next(error);
+  }
+};

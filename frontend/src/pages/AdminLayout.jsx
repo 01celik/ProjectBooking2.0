@@ -4,10 +4,10 @@ import "../styles/AdminSidebar.css";
 
 function AdminLayout() {
   return (
-    <div className="admin-test-page">
+    <div className="admin-layout">
       <AdminSidebar />
 
-      <main className="admin-test-content">
+      <main className="admin-content">
         <Outlet />
       </main>
     </div>

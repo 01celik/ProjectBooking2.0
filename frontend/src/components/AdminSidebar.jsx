@@ -35,6 +35,7 @@ function AdminSidebar() {
           <NavLink to="/admin/reservations">Reservations</NavLink>
           <NavLink to="/admin/users">Users</NavLink>
           <NavLink to="/admin/rooms">Rooms</NavLink>
+          <NavLink to="/">Main page</NavLink>
         </nav>
       </div>
 

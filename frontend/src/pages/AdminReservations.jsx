@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import AdminSidebar from "../components/AdminSidebar";
+import "../styles/usersSection.css";
 import "../styles/AdminReservations.css";
 import { API_BASE } from "../config/api";
 
@@ -8,8 +8,8 @@ function AdminReservations() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Track which booking is being edited row-by-row
   const [editingId, setEditingId] = useState(null);
+
   const [editFormData, setEditFormData] = useState({
     roomNumber: "",
     fromDate: "",
@@ -18,21 +18,26 @@ function AdminReservations() {
     status: "",
   });
 
-  // Fetch data on load
   useEffect(() => {
     fetchAllReservations();
   }, []);
 
   const fetchAllReservations = async () => {
     setLoading(true);
+
     try {
       const response = await fetch(`${API_BASE}/bookings/admin/allBookings`, {
         method: "GET",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
       });
+
       const result = await response.json();
-      if (!response.ok) throw new Error(result.message || "Failed to fetch records.");
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to fetch records.");
+      }
+
       setReservations(result.data || []);
     } catch (err) {
       console.error("Fetch Error:", err);
@@ -42,29 +47,39 @@ function AdminReservations() {
     }
   };
 
-  // Delete Handler
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this reservation record?")) return;
+    if (!window.confirm("Are you sure you want to delete this reservation?")) {
+      return;
+    }
+
     try {
-      const response = await fetch(`/bookings/admin/delete/${id}`, {
+      const response = await fetch(`${API_BASE}/bookings/admin/delete/${id}`, {
         method: "DELETE",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
       });
+
       const result = await response.json();
-      if (!response.ok) throw new Error(result.message || "Failed to delete booking.");
-      
-      // Remove item from UI state immediately
-      setReservations(reservations.filter((b) => (b.bookingId || b.id) !== id));
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to delete booking.");
+      }
+
+      setReservations((currentReservations) =>
+        currentReservations.filter((booking) => {
+          return (booking.bookingId || booking.id) !== id;
+        })
+      );
     } catch (err) {
       alert(err.message);
     }
   };
 
-  // Open inline editor row values
   const handleEditClick = (booking) => {
     const id = booking.bookingId || booking.id;
+
     setEditingId(id);
+
     setEditFormData({
       roomNumber: booking.roomNumber || "",
       fromDate: booking.fromDate || "",
@@ -74,30 +89,38 @@ function AdminReservations() {
     });
   };
 
-  // Handle input modifications within edit mode
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditFormData({ ...editFormData, [name]: value });
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+
+    setEditFormData({
+      ...editFormData,
+      [name]: value,
+    });
   };
 
-  // Save changes handler
   const handleSaveSubmit = async (id) => {
     try {
-      const response = await fetch(`/bookings/admin/update/${id}`, {
+      const response = await fetch(`${API_BASE}/bookings/admin/update/${id}`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editFormData),
       });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || "Failed to update record.");
 
-      // Sync state array matching the updated object values
-      setReservations(
-        reservations.map((b) =>
-          (b.bookingId || b.id) === id ? { ...b, ...editFormData } : b
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to update record.");
+      }
+
+      setReservations((currentReservations) =>
+        currentReservations.map((booking) =>
+          (booking.bookingId || booking.id) === id
+            ? { ...booking, ...editFormData }
+            : booking
         )
       );
+
       setEditingId(null);
     } catch (err) {
       alert(err.message);
@@ -105,42 +128,57 @@ function AdminReservations() {
   };
 
   return (
-    <div className="admin-layout-container">
-      <AdminSidebar />
+    <section className="users-section">
+      <div className="users-header">
+        <div>
+          <p className="users-kicker">Admin management</p>
 
-      <main className="admin-main-view">
-        <header className="admin-view-header">
-          <h1>Master Reservations List</h1>
-          <p>Complete historical customer record logging data lookup.</p>
-        </header>
+          <h1>Reservations</h1>
 
-        <hr className="divider-line" />
+          <p>
+            View all hotel reservations, update booking details, manage statuses
+            and maintain reservation records
+          </p>
+        </div>
+      </div>
 
-        {loading && <p className="status-msg">Loading records...</p>}
-        {error && <p className="status-msg error-msg">{error}</p>}
+      {loading && <p className="admin-reservations-message">Loading records...</p>}
 
-        {!loading && !error && (
-          <div className="table-wrapper-box">
-            <div className="table-header-row">
-              <h2>All Active Bookings ({reservations.length})</h2>
+      {error && (
+        <p className="admin-reservations-message error-msg">{error}</p>
+      )}
+
+      {!loading && !error && (
+        <div className="users-table-card">
+          <div className="users-table-header">
+            <div>
+              <p className="users-kicker">Reservation database</p>
+              <h2>Booking information</h2>
             </div>
-            
+
+            <span className="users-count">
+              Showing {reservations.length} records
+            </span>
+          </div>
+
+          <div className="admin-reservations-table-wrapper">
             {reservations.length === 0 ? (
-              <p className="empty-msg">No records found in the database system.</p>
+              <p className="users-empty">No reservations found.</p>
             ) : (
-              <table className="custom-admin-table">
+              <table className="admin-reservations-table">
                 <thead>
                   <tr>
                     <th>Booking ID</th>
                     <th>User ID</th>
-                    <th>Room #</th>
-                    <th>Check In</th>
-                    <th>Check Out</th>
-                    <th>Total Cost</th>
+                    <th>Room</th>
+                    <th>Check in</th>
+                    <th>Check out</th>
+                    <th>Total cost</th>
                     <th>Status</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {reservations.map((booking) => {
                     const id = booking.bookingId || booking.id;
@@ -150,8 +188,7 @@ function AdminReservations() {
                       <tr key={id}>
                         <td>{id}</td>
                         <td>{booking.userId}</td>
-                        
-                        {/* Room input check */}
+
                         <td>
                           {isEditing ? (
                             <input
@@ -166,7 +203,6 @@ function AdminReservations() {
                           )}
                         </td>
 
-                        {/* Check-In input check */}
                         <td>
                           {isEditing ? (
                             <input
@@ -181,7 +217,6 @@ function AdminReservations() {
                           )}
                         </td>
 
-                        {/* Check-Out input check */}
                         <td>
                           {isEditing ? (
                             <input
@@ -196,7 +231,6 @@ function AdminReservations() {
                           )}
                         </td>
 
-                        {/* Total Cost check */}
                         <td>
                           {isEditing ? (
                             <input
@@ -207,11 +241,10 @@ function AdminReservations() {
                               onChange={handleInputChange}
                             />
                           ) : (
-                            `$${booking.totalCost}`
+                            `${Number(booking.totalCost || 0).toLocaleString()} SEK`
                           )}
                         </td>
 
-                        {/* Status Check selection */}
                         <td>
                           {isEditing ? (
                             <select
@@ -220,29 +253,31 @@ function AdminReservations() {
                               value={editFormData.status}
                               onChange={handleInputChange}
                             >
-                              <option value="pending">PENDING</option>
-                              <option value="confirmed">CONFIRMED</option>
-                              <option value="cancelled">CANCELLED</option>
+                              <option value="pending">pending</option>
+                              <option value="confirmed">confirmed</option>
+                              <option value="cancelled">cancelled</option>
                             </select>
                           ) : (
                             <span className={`status-badge ${booking.status}`}>
-                              {(booking.status || "UNKNOWN").toUpperCase()}
+                              {booking.status || "unknown"}
                             </span>
                           )}
                         </td>
 
-                        {/* Control Actions Column */}
                         <td>
                           <div className="action-btn-group">
                             {isEditing ? (
                               <>
                                 <button
+                                  type="button"
                                   onClick={() => handleSaveSubmit(id)}
                                   className="action-btn save-btn"
                                 >
                                   Save
                                 </button>
+
                                 <button
+                                  type="button"
                                   onClick={() => setEditingId(null)}
                                   className="action-btn cancel-btn"
                                 >
@@ -252,12 +287,15 @@ function AdminReservations() {
                             ) : (
                               <>
                                 <button
+                                  type="button"
                                   onClick={() => handleEditClick(booking)}
                                   className="action-btn edit-btn"
                                 >
                                   Edit
                                 </button>
+
                                 <button
+                                  type="button"
                                   onClick={() => handleDelete(id)}
                                   className="action-btn delete-btn"
                                 >
@@ -274,9 +312,9 @@ function AdminReservations() {
               </table>
             )}
           </div>
-        )}
-      </main>
-    </div>
+        </div>
+      )}
+    </section>
   );
 }
 

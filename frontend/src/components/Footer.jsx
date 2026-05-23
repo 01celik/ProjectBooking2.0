@@ -36,8 +36,8 @@ function Footer() {
         <Link to="/rooms">Rooms</Link>
         <Link to="/meetings-events">Meetings & Events</Link>
         <Link to="/wellness">Wellness</Link>
-        <a href="#">Restaurant & Bar</a>
-        <a href="#">About Us</a>
+        <Link to="/restaurant-bar">Restaurant & Bar</Link>
+        <Link to="/about">About Us</Link>
 
       </div>
 

@@ -27,8 +27,10 @@ export default function UserAccountMenu() {
     function handleClickOutside(e) {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
     }
+
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("touchstart", handleClickOutside);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("touchstart", handleClickOutside);
@@ -41,6 +43,7 @@ export default function UserAccountMenu() {
         method: "POST",
         credentials: "include",
       });
+
       setUser(null);
       navigate("/");
     } catch (err) {
@@ -56,9 +59,20 @@ export default function UserAccountMenu() {
       ? user.profileImageUrl
       : null;
 
+  const isAdmin = user.role === "admin";
+
   return (
-    <div className={`has-dropdown account-menu-slot${open ? " dropdown-open" : ""}`} ref={ref}>
-      <button type="button" className="account-menu-trigger-btn" onClick={() => setOpen(o => !o)}>
+    <div
+      className={`has-dropdown account-menu-slot${
+        open ? " dropdown-open" : ""
+      }`}
+      ref={ref}
+    >
+      <button
+        type="button"
+        className="account-menu-trigger-btn"
+        onClick={() => setOpen((o) => !o)}
+      >
         {avatarSrc ? (
           <img
             key={avatarSrc.slice(0, 80)}
@@ -71,25 +85,31 @@ export default function UserAccountMenu() {
             {initials(user)}
           </span>
         )}
+
         <span>Hi {displayFirstName(user)}!</span>
       </button>
 
       <ul className="dropdown account-menu-dropdown" role="menu">
-        <li role="none">
-          <Link to="/" role="menuitem">
-            Overview
-          </Link>
-        </li>
+        {isAdmin && (
+          <li role="none">
+            <Link to="/admin/dashboard" role="menuitem">
+              Admin panel
+            </Link>
+          </li>
+        )}
+
         <li role="none">
           <Link to="/my-bookings" role="menuitem">
             My stays
           </Link>
         </li>
+
         <li role="none">
           <Link to="/profile" role="menuitem">
             My profile
           </Link>
         </li>
+
         <li role="none">
           <button
             type="button"

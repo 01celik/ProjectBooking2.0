@@ -73,7 +73,7 @@ function ResetPassword() {
         </Link>
         <div className="login-logo-center">
           <Link to="/" className="login-logo-text">
-            Hotel
+            Aurora
           </Link>
         </div>
         <div className="login-header-spacer" aria-hidden />

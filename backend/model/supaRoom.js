@@ -79,3 +79,61 @@ module.exports.getRoomDetails = async (roomNumber) => {
     throw error;
   }
 };
+
+/**
+ * ADMIN: Get all rooms
+ */
+module.exports.getAllRooms = async () => {
+  const { data, error } = await supabase
+    .from("room")
+    .select("*")
+    .order("roomNumber", { ascending: true });
+
+  if (error) throw error;
+
+  return data;
+};
+
+/**
+ * ADMIN: Create room
+ */
+module.exports.createRoom = async (roomData) => {
+  const { data, error } = await supabase
+    .from("room")
+    .insert([roomData])
+    .select();
+
+  if (error) throw error;
+
+  return data;
+};
+
+/**
+ * ADMIN: Update room
+ */
+module.exports.updateRoom = async (roomNumber, updateData) => {
+  const { data, error } = await supabase
+    .from("room")
+    .update(updateData)
+    .eq("roomNumber", roomNumber)
+    .select();
+
+  if (error) throw error;
+
+  return data;
+};
+
+/**
+ * ADMIN: Delete room
+ */
+module.exports.deleteRoom = async (roomNumber) => {
+  const { data, error } = await supabase
+    .from("room")
+    .delete()
+    .eq("roomNumber", roomNumber)
+    .select();
+
+  if (error) throw error;
+
+  return data;
+};

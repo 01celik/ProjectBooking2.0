@@ -11,7 +11,6 @@ function RoomSelect() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Extract variables from the initial search box redirect
   const rooms = location.state?.rooms || [];
   const totalGuests = location.state?.totalGuests || 1;
   const fromDate = location.state?.fromDate || null;
@@ -19,7 +18,6 @@ function RoomSelect() {
 
   const [availableRooms, setAvailableRooms] = useState([]);
 
-  // Filters state
   const [filters, setFilters] = useState({
     search: "",
     beds: "any",
@@ -31,25 +29,19 @@ function RoomSelect() {
     sortBy: "default",
   });
 
-  // ===== 1. FIXED THE EFFECT KICK-BACK LOOP =====
   useEffect(() => {
-    // Check for the 'rooms' key passed from BookingBox.jsx
     if (!location.state?.rooms) {
       navigate("/");
       return;
     }
 
-    // Set the data payload directly into state
     setAvailableRooms(location.state.rooms);
   }, [location.state, navigate]);
 
-  // ===== 2. FIXED DATA EXTRACTION PATH =====
-  // Since we already extracted .data inside BookingBox.jsx, availableRooms is now the flat array!
   const roomsData = useMemo(() => {
     return Array.isArray(availableRooms) ? availableRooms : [];
   }, [availableRooms]);
 
-  // Derive price bounds from data
   const priceBounds = useMemo(() => {
     if (!roomsData.length) return { min: 0, max: 0 };
     const prices = roomsData.map((r) => Number(r.pricePerNight) || 0);
@@ -57,7 +49,6 @@ function RoomSelect() {
   }, [roomsData]);
 
   useEffect(() => {
-    // Initialize price filters when rooms arrive
     if (priceBounds.max > 0) {
       setFilters((f) => ({
         ...f,
@@ -85,38 +76,51 @@ function RoomSelect() {
         if (
           filters.beds !== "any" &&
           Number(r.noOfBeds) !== Number(filters.beds)
-        )
+        ) {
           return false;
+        }
 
         if (
           filters.roomType !== "any" &&
-          String(r.roomType).toLowerCase() !==
+          String(r.type).toLowerCase() !==
             String(filters.roomType).toLowerCase()
-        )
+        ) {
           return false;
+        }
 
         const price = Number(r.pricePerNight) || 0;
+
         if (
           price < Number(filters.minPrice) ||
           price > Number(filters.maxPrice)
-        )
+        ) {
           return false;
+        }
 
         if (!filters.statusAvailable && r.status === "available") return false;
-        if (!filters.statusUnavailable && r.status !== "available")
+        if (!filters.statusUnavailable && r.status !== "available") {
           return false;
+        }
 
         return true;
       })
       .sort((a, b) => {
-        if (filters.sortBy === "priceAsc")
+        if (filters.sortBy === "priceAsc") {
           return Number(a.pricePerNight) - Number(b.pricePerNight);
-        if (filters.sortBy === "priceDesc")
+        }
+
+        if (filters.sortBy === "priceDesc") {
           return Number(b.pricePerNight) - Number(a.pricePerNight);
-        if (filters.sortBy === "bedsAsc")
+        }
+
+        if (filters.sortBy === "bedsAsc") {
           return Number(a.noOfBeds) - Number(b.noOfBeds);
-        if (filters.sortBy === "bedsDesc")
+        }
+
+        if (filters.sortBy === "bedsDesc") {
           return Number(b.noOfBeds) - Number(a.noOfBeds);
+        }
+
         return 0;
       });
   }, [roomsData, filters]);
@@ -139,7 +143,11 @@ function RoomSelect() {
       <TopBar />
       <Header />
 
-      <RoomPageModifyBar />
+      <RoomPageModifyBar
+        fromDate={fromDate}
+        toDate={toDate}
+        totalGuests={totalGuests}
+      />
 
       <div className="room-select-container">
         <aside className="filters">
@@ -183,7 +191,7 @@ function RoomSelect() {
             <option value="suite">Suite</option>
           </select>
 
-          <label>Price range (€)</label>
+          <label>Price range (SEK)</label>
           <div className="price-row">
             <input
               type="number"
@@ -194,7 +202,9 @@ function RoomSelect() {
                 setFilters((f) => ({ ...f, minPrice: Number(e.target.value) }))
               }
             />
+
             <span>—</span>
+
             <input
               type="number"
               value={filters.maxPrice}
@@ -267,6 +277,7 @@ function RoomSelect() {
           />
         </main>
       </div>
+
       <Footer />
     </div>
   );

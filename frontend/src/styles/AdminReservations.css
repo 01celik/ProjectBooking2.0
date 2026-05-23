@@ -1,152 +1,140 @@
-/* Container framework dividing sidebar layout from table contents */
-.admin-layout-container {
-  display: flex;
-  min-height: 100vh;
-  width: 100vw;
-  background-color: #f8f9fa;
-  font-family: 'Montserrat', sans-serif;
-  overflow-x: hidden;
+.admin-reservations-message {
+  margin-top: 1.4rem;
+  color: rgba(76, 0, 27, 0.68);
+  font-size: 0.9rem;
+  font-weight: 800;
 }
 
-/* Main window layout wrapper */
-.admin-main-view {
-  flex-grow: 1;
-  padding: 40px;
-  background-color: #fdfdfd;
-  box-sizing: border-box;
-  overflow-y: auto;
+.error-msg {
+  color: #9f1d1d;
 }
 
-/* Headers styling structural setup */
-.admin-view-header h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.2rem;
-  color: #222222;
-  margin: 0 0 8px 0;
+.admin-reservations-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
 }
 
-.admin-view-header p {
-  font-size: 0.95rem;
-  color: #666666;
-  margin: 0;
-}
-
-.divider-line {
-  border: 0;
-  height: 1px;
-  background-color: #eaeaea;
-  margin: 25px 0;
-}
-
-/* Table container components box shape adjustments */
-.table-wrapper-box {
-  background-color: #ffffff;
-  border: 1px solid #eef0f2;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-}
-
-.table-header-row h2 {
-  font-size: 1.25rem;
-  color: #333333;
-  margin-top: 0;
-  margin-bottom: 20px;
-}
-
-/* Table grid specifications layout details */
-.custom-admin-table {
+.admin-reservations-table {
   width: 100%;
   border-collapse: collapse;
+}
+
+.admin-reservations-table th,
+.admin-reservations-table td {
+  padding: 1rem 0.85rem;
+  border-bottom: 1px solid rgba(77, 0, 27, 0.09);
   text-align: left;
-  font-size: 0.9rem;
-}
-
-.custom-admin-table th {
-  background-color: #f4f6f8;
-  color: #555555;
-  font-weight: 600;
-  padding: 14px 16px;
-  border-bottom: 2px solid #eef0f2;
-}
-
-.custom-admin-table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid #f0f2f5;
-  color: #444444;
   vertical-align: middle;
+  white-space: nowrap;
 }
 
-.custom-admin-table tbody tr:hover {
-  background-color: #f9fbfd;
+.admin-reservations-table th {
+  background: #faf7f5;
+  color: rgba(76, 0, 27, 0.58);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
 }
 
-/* Status system tags badges look updates */
+.admin-reservations-table th:first-child {
+  border-top-left-radius: 0.75rem;
+}
+
+.admin-reservations-table th:last-child {
+  border-top-right-radius: 0.75rem;
+}
+
+.admin-reservations-table td {
+  color: var(--primary-text, #4d001b);
+  font-size: 0.88rem;
+  font-weight: 750;
+}
+
+.admin-reservations-table tbody tr {
+  transition: 0.15s ease;
+}
+
+.admin-reservations-table tbody tr:hover {
+  background: #fbf7f8;
+}
+
 .status-badge {
   display: inline-block;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-align: center;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: capitalize;
 }
 
 .status-badge.confirmed {
-  background-color: #e3fcef;
-  color: #006644;
+  background: #e4f6ea;
+  color: #1f7041;
 }
 
 .status-badge.pending {
-  background-color: #fffae6;
-  color: #a36f00;
+  background: #fff4d6;
+  color: #8a5a00;
 }
 
 .status-badge.cancelled {
-  background-color: #ffebe6;
+  background: #ffebe6;
   color: #bf2600;
 }
 
-/* Action button component groups configuration features */
 .action-btn-group {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .action-btn {
-  padding: 6px 12px;
   border: none;
-  border-radius: 4px;
+  padding: 0.55rem 0.8rem;
+  border-radius: 999px;
   cursor: pointer;
-  font-size: 0.8rem;
-  font-weight: 500;
-  transition: opacity 0.2s;
+  font-size: 0.78rem;
+  font-weight: 900;
 }
 
-.action-btn:hover {
-  opacity: 0.85;
+.edit-btn,
+.save-btn {
+  background: #e8eefc;
+  color: #254c97;
 }
 
-.edit-btn { background-color: #eaeaea; color: #333333; }
-.delete-btn { background-color: #ffebe6; color: #bf2600; }
-.save-btn { background-color: #0052cc; color: #ffffff; }
-.cancel-btn { background-color: #7a869a; color: #ffffff; }
+.delete-btn {
+  background: #ffebe6;
+  color: #bf2600;
+}
 
-/* Inline Inputs forms element look changes */
-.table-inline-input, .table-inline-select {
+.cancel-btn {
+  background: #f1edf0;
+  color: rgba(76, 0, 27, 0.84);
+}
+
+.table-inline-input,
+.table-inline-select {
   width: 100%;
-  padding: 6px 8px;
-  border: 1px solid #cccccc;
-  border-radius: 4px;
+  min-width: 7rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(77, 0, 27, 0.14);
+  border-radius: 0.75rem;
   box-sizing: border-box;
-  font-family: inherit;
-  font-size: 0.85rem;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.84rem;
+  font-weight: 750;
+  color: var(--primary-text, #4d001b);
+}
+
+.table-inline-input:focus,
+.table-inline-select:focus {
+  outline: none;
+  border-color: var(--accent, #9d174d);
+  box-shadow: 0 0 0 4px rgba(157, 23, 77, 0.12);
 }
 
 .cost-input {
-  max-width: 90px;
+  max-width: 7rem;
 }
-
-/* General system message alerts markers */
-.status-msg { padding: 15px; font-size: 0.95rem; }
-.error-msg { color: #bf2600; font-weight: 600; }
-.empty-msg { color: #777777; font-style: italic; }

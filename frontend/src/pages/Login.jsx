@@ -43,8 +43,13 @@ function Login() {
         return;
       }
 
-      setUser(data.user ?? data);
-      navigate("/");
+      const loggedInUser = data.user ?? data;
+      setUser(loggedInUser);
+      if (loggedInUser.role === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       console.error(err);
       setError("Server error. Please try again.");
@@ -71,11 +76,11 @@ function Login() {
               strokeWidth="2"
             />
           </svg>
-          <span>Go back to Hotel.com</span>
+          <span>Go back to Aurora.com</span>
         </Link>
         <div className="login-logo-center">
           <Link to="/" className="login-logo-text">
-            Hotel
+            Aurora
           </Link>
         </div>
         <div className="login-header-spacer" aria-hidden />
@@ -183,14 +188,14 @@ function Login() {
                 <h2>Not a member? Join us!</h2>
 
                 <Link to="/joinnow" className="login-btn-join">
-                  Join Hotel Friends
+                  Join Aurora Friends
                 </Link>
 
                 <hr className="login-membership-divider" />
 
                 <p className="login-membership-copy">
                   Get offers, discounts, surprises and other great things. Like
-                  free reward nights at our hotels. Because hey, only the best
+                  free reward nights at our hotel. Because hey, only the best
                   for friends, right?
                 </p>
                 <a className="login-read-more" href="#">
