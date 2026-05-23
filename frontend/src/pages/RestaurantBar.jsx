@@ -14,7 +14,7 @@ import RBImage from "../assets/Restaurant.png";
 import RBImage2 from "../assets/Bar 1.png";
 import RBImage3 from "../assets/Bar 2.png";
 
-import "../styles/restaurantBar.css";
+import "../styles/RestaurantBar.css";
 
 function RestaurantBar() {
   const location = useLocation();
