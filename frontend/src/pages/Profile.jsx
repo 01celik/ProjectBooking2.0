@@ -325,7 +325,7 @@ function ProfileEditor({ user, refreshUser }) {
               Browse rooms and offers, then reserve your dates when you are
               ready.
             </p>
-            <Link to="/booking" className="join-secondary-btn">
+            <Link to="/" className="join-secondary-btn">
               Go to booking
             </Link>
             <Link to="/" className="join-secondary-btn profile-aside-link-alt">
