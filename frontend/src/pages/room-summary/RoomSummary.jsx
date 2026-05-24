@@ -1,8 +1,21 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import TopBar from "../../components/TopBar";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 import { useAuth } from "../../context/AuthContext";
-import "../../styles/room-summary.css";
 import { API_BASE } from "../../config/api";
+import "../../styles/room-summary.css";
+
+function formatDate(dateString) {
+  if (!dateString) return "";
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ];
+  const [year, month, day] = dateString.split("-");
+  return `${parseInt(day, 10)} ${months[parseInt(month, 10) - 1]} ${year}`;
+}
 
 function RoomSummary() {
   const location = useLocation();
@@ -16,7 +29,7 @@ function RoomSummary() {
 
   const additionalGuestsCount = Math.max(0, totalGuests - 1);
   const [extraGuests, setExtraGuests] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false); // Track payment redirection execution
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setExtraGuests(Array(additionalGuestsCount).fill(""));
@@ -30,138 +43,96 @@ function RoomSummary() {
 
   if (loading) {
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "60vh",
-          fontFamily: "'Inter', sans-serif",
-          color: "#2b2b2b",
-        }}
-      >
-        <p
-          style={{
-            letterSpacing: "1px",
-            fontSize: "13px",
-            textTransform: "uppercase",
-          }}
-        >
-          Loading your checkout experience...
-        </p>
-      </div>
+      <>
+        <TopBar />
+        <Header />
+        <main className="summary-page summary-state-page">
+          <div className="summary-state-card">
+            <p className="summary-state-label">Loading your reservation…</p>
+          </div>
+        </main>
+        <Footer />
+      </>
     );
   }
 
   if (!user) {
     return (
-      <div
-        style={{
-          textAlign: "center",
-          padding: "100px 20px",
-          fontFamily: "'Inter', sans-serif",
-        }}
-      >
-        <h2
-          style={{ fontWeight: "300", color: "#1c1c1c", marginBottom: "20px" }}
-        >
-          Please sign in to complete your booking
-        </h2>
-        <button
-          onClick={() => navigate("/login")}
-          style={{
-            padding: "14px 28px",
-            background: "#1c1c1c",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer",
-            letterSpacing: "1px",
-            textTransform: "uppercase",
-            fontSize: "12px",
-            fontWeight: "600",
-          }}
-        >
-          Go to Login
-        </button>
-      </div>
+      <>
+        <TopBar />
+        <Header />
+        <main className="summary-page summary-state-page">
+          <div className="summary-state-card">
+            <h2 className="summary-state-title">
+              Please sign in to complete your booking
+            </h2>
+            <button
+              type="button"
+              className="summary-primary-btn"
+              onClick={() => navigate("/login")}
+            >
+              Go to login
+            </button>
+          </div>
+        </main>
+        <Footer />
+      </>
     );
   }
 
   if (!room) {
     return (
-      <div
-        style={{
-          textAlign: "center",
-          padding: "100px 20px",
-          fontFamily: "'Inter', sans-serif",
-        }}
-      >
-        <h2
-          style={{ fontWeight: "300", color: "#1c1c1c", marginBottom: "20px" }}
-        >
-          No room configurations found
-        </h2>
-        <button
-          onClick={() => navigate(-1)}
-          style={{
-            padding: "14px 28px",
-            background: "#1c1c1c",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer",
-            letterSpacing: "1px",
-            textTransform: "uppercase",
-            fontSize: "12px",
-            fontWeight: "600",
-          }}
-        >
-          Return to Selection
-        </button>
-      </div>
+      <>
+        <TopBar />
+        <Header />
+        <main className="summary-page summary-state-page">
+          <div className="summary-state-card">
+            <h2 className="summary-state-title">No room selected</h2>
+            <button
+              type="button"
+              className="summary-primary-btn"
+              onClick={() => navigate(-1)}
+            >
+              Return to selection
+            </button>
+          </div>
+        </main>
+        <Footer />
+      </>
     );
   }
 
-  const memberPrice = Math.round(room.pricePerNight * 0.9);
-
   const nights = (() => {
-    try {
-      if (!fromDate || !toDate) return 1;
-      const d1 = new Date(fromDate);
-      const d2 = new Date(toDate);
-      const diff = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
-      return diff > 0 ? diff : 1;
-    } catch (e) {
-      return 1;
-    }
+    if (!fromDate || !toDate) return 1;
+    const d1 = new Date(fromDate);
+    const d2 = new Date(toDate);
+    const diff = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+    return diff > 0 ? diff : 1;
   })();
 
-  const totalPrice = Math.round((room.pricePerNight || 0) * nights);
+  const pricePerNight = Number(room.pricePerNight) || 0;
+  const totalPrice = Math.round(pricePerNight * nights);
 
-  // API Call to initiate transaction secure backend reservation
   const handleConfirmBooking = async () => {
     setIsSubmitting(true);
 
-    // Filter valid companion details if applicable (can be saved to database dynamically or sent as metadata)
     const additionalGuestsString = extraGuests
       .filter((g) => g.trim() !== "")
       .join(", ");
 
-    // Prepare payload structured strictly matching your backend controller parsing rules
     const bookingPayload = {
-      roomNumber: room.roomNumber, // Matches your controller: const { roomNumber } = req.body;
-      fromDate: fromDate, // Format expected: YYYY-MM-DD
-      toDate: toDate, // Format expected: YYYY-MM-DD
-      additionalGuests: additionalGuestsString, // Optional extension fields
+      roomNumber: room.roomNumber,
+      fromDate,
+      toDate,
+      additionalGuests: additionalGuestsString,
     };
 
     try {
-      // Replace URL with your correct backend target API environment address
       const response = await fetch(`${API_BASE}/bookings/initiate`, {
         credentials: "include",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Pass authorization token if using JWT middleware setup
           Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
         },
         body: JSON.stringify(bookingPayload),
@@ -170,10 +141,8 @@ function RoomSummary() {
       const data = await response.json();
 
       if (data.success && data.url) {
-        // Redirect browser directly to Stripe Checkout hosted checkout application
         window.location.href = data.url;
       } else {
-        // Handle gracefully custom database logic errors (e.g., room already taken or date exceptions)
         alert(
           data.message ||
             "Reservation could not be initialized. Please try another period.",
@@ -182,423 +151,201 @@ function RoomSummary() {
       }
     } catch (error) {
       console.error("Payment integration error:", error);
-      alert(
-        "Network connectivity issue. Please confirm settings and try again.",
-      );
+      alert("Network connectivity issue. Please confirm settings and try again.");
       setIsSubmitting(false);
     }
   };
 
-  const styles = {
-    pageWrapper: {
-      maxWidth: "1140px",
-      margin: "0 auto",
-      padding: "60px 20px",
-      fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
-      color: "#2b2b2b",
-      backgroundColor: "#fcfcfc",
-    },
-    header: {
-      fontSize: "36px",
-      fontWeight: "300",
-      letterSpacing: "-0.5px",
-      marginBottom: "50px",
-      color: "#1c1c1c",
-    },
-    splitLayout: {
-      display: "grid",
-      gridTemplateColumns: "1.2fr 1fr",
-      gap: "70px",
-      alignItems: "start",
-    },
-    leftColumn: {
-      display: "flex",
-      flexDirection: "column",
-      gap: "45px",
-    },
-    rightColumn: {
-      position: "sticky",
-      top: "40px",
-      backgroundColor: "#ffffff",
-      padding: "35px",
-      borderRadius: "0px",
-      border: "1px solid #ededed",
-    },
-    sectionTitle: {
-      fontSize: "16px",
-      fontWeight: "600",
-      letterSpacing: "1px",
-      marginBottom: "25px",
-      textTransform: "uppercase",
-      color: "#1c1c1c",
-      borderBottom: "1px solid #1c1c1c",
-      paddingBottom: "10px",
-    },
-    imageContainer: {
-      width: "100%",
-      height: "300px",
-      overflow: "hidden",
-      marginBottom: "25px",
-      backgroundColor: "#f0f0f0",
-    },
-    roomImage: {
-      width: "100%",
-      height: "100%",
-      objectFit: "cover",
-    },
-    inputField: {
-      width: "100%",
-      padding: "14px 16px",
-      fontSize: "15px",
-      border: "1px solid #cccccc",
-      borderRadius: "0px",
-      backgroundColor: "#ffffff",
-      boxSizing: "border-box",
-      outline: "none",
-      fontFamily: "inherit",
-      transition: "border-color 0.2s ease",
-    },
-    textMuted: {
-      color: "#666666",
-      fontSize: "14px",
-      lineHeight: "1.6",
-    },
-    priceRow: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "baseline",
-      padding: "10px 0",
-    },
-    primaryBtn: {
-      width: "100%",
-      padding: "18px",
-      background: isSubmitting ? "#767676" : "#1c1c1c",
-      color: "#ffffff",
-      border: "none",
-      fontWeight: "600",
-      letterSpacing: "1.5px",
-      textTransform: "uppercase",
-      fontSize: "13px",
-      cursor: isSubmitting ? "not-allowed" : "pointer",
-      marginTop: "30px",
-      transition: "background 0.2s ease",
-    },
-  };
-
   return (
-    <div style={styles.pageWrapper} className="summary-page">
-      <h1 style={styles.header}>Review your reservation</h1>
+    <>
+      <TopBar />
+      <Header />
 
-      <div style={styles.splitLayout} className="summary-split">
-        <div style={styles.leftColumn}>
-          <div>
-            <h2 style={styles.sectionTitle}>1. Guest Contact</h2>
-            <div
-              className="summary-guest-grid"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "25px",
-                marginTop: "15px",
-              }}
-            >
-              <div>
-                <span
-                  style={{
-                    fontSize: "11px",
-                    textTransform: "uppercase",
-                    color: "#767676",
-                    display: "block",
-                    marginBottom: "6px",
-                    letterSpacing: "0.5px",
-                  }}
-                >
-                  Username Profile
-                </span>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: "16px",
-                    fontWeight: "500",
-                    color: "#1c1c1c",
-                  }}
-                >
-                  {user.username || "Authenticated User"}
-                </p>
-              </div>
-              <div>
-                <span
-                  style={{
-                    fontSize: "11px",
-                    textTransform: "uppercase",
-                    color: "#767676",
-                    display: "block",
-                    marginBottom: "6px",
-                    letterSpacing: "0.5px",
-                  }}
-                >
-                  Email Address
-                </span>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: "16px",
-                    fontWeight: "500",
-                    color: "#1c1c1c",
-                  }}
-                >
-                  {user.email || "N/A"}
-                </p>
-              </div>
-            </div>
-            <p
-              style={{
-                ...styles.textMuted,
-                marginTop: "20px",
-                fontSize: "13px",
-                fontStyle: "italic",
-                color: "#8c8c8c",
-              }}
-            >
-              * Your digital mobile key access and room receipt statements will
-              be directed to this secure log.
-            </p>
-          </div>
-
-          {additionalGuestsCount > 0 && (
-            <div>
-              <h2 style={styles.sectionTitle}>2. Accompanying Guests</h2>
-              <p style={{ ...styles.textMuted, marginBottom: "25px" }}>
-                Your search specified a total of {totalGuests} guests. Please
-                declare the names of the individuals sharing your allocated
-                layout:
-              </p>
-
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "24px",
-                }}
-              >
-                {extraGuests.map((guestName, index) => (
-                  <div key={index}>
-                    <label
-                      style={{
-                        display: "block",
-                        marginBottom: "8px",
-                        fontSize: "11px",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.8px",
-                        fontWeight: "600",
-                        color: "#444",
-                      }}
-                    >
-                      Full Name — Companion #{index + 1}
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g., Axel Wallin"
-                      value={guestName}
-                      onChange={(e) =>
-                        handleGuestNameChange(index, e.target.value)
-                      }
-                      style={styles.inputField}
-                      required
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div style={styles.rightColumn} className="summary-right-col">
-          <div style={styles.imageContainer}>
-            <img
-              src={room.image_url ? `${API_BASE}${room.image_url}` : "/placeholder-image.jpg"}
-              alt={room.type}
-              style={styles.roomImage}
-            />
-          </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <h3
-              style={{
-                fontSize: "24px",
-                fontWeight: "300",
-                margin: "0 0 5px 0",
-                color: "#1c1c1c",
-                letterSpacing: "-0.5px",
-              }}
-            >
-              {room.type.toUpperCase()} ROOM
-            </h3>
-            <span
-              style={{
-                fontSize: "11px",
-                color: "#767676",
-                textTransform: "uppercase",
-                letterSpacing: "1px",
-                fontWeight: "500",
-              }}
-            >
-              Room Allocation #{room.roomNumber}
-            </span>
-
-            <div
-              style={{
-                marginTop: "8px",
-                padding: "12px",
-                background: "#fbfbfb",
-                border: "1px solid #f0f0f0",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <strong style={{ fontSize: "13px" }}>Dates</strong>
-                <span style={{ fontSize: "13px", color: "#666" }}>
-                  {fromDate && toDate
-                    ? new Date(fromDate).toLocaleDateString() +
-                      " — " +
-                      new Date(toDate).toLocaleDateString()
-                    : "Not specified"}
-                </span>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "8px",
-                }}
-              >
-                <strong style={{ fontSize: "13px" }}>Guests</strong>
-                <span style={{ fontSize: "13px", color: "#666" }}>
-                  {totalGuests}
-                </span>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "8px",
-                }}
-              >
-                <strong style={{ fontSize: "13px" }}>Nights</strong>
-                <span style={{ fontSize: "13px", color: "#666" }}>
-                  {nights}
-                </span>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "12px",
-                }}
-              >
-                <strong style={{ fontSize: "13px" }}>Total</strong>
-                <span style={{ fontSize: "15px", fontWeight: "600" }}>
-                  SEK{totalPrice}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <p
-            style={{
-              ...styles.textMuted,
-              fontSize: "14px",
-              margin: "20px 0",
-              color: "#555",
-            }}
-          >
-            {room.description ||
-              "Thoughtfully curated with organic Nordic wood craftsmanship, sustainable wool textiles, and clean architectural lighting profiles."}
+      <main className="summary-page">
+        <section className="summary-hero">
+          <p className="summary-eyebrow">Booking</p>
+          <h1>Review your reservation</h1>
+          <p className="summary-hero-subtitle">
+            Confirm your details below and continue securely to payment.
           </p>
+        </section>
 
-          <div
-            style={{
-              display: "flex",
-              gap: "15px",
-              fontSize: "13px",
-              color: "#666",
-              borderBottom: "1px solid #f0f0f0",
-              paddingBottom: "20px",
-              marginBottom: "20px",
-            }}
-          >
-            <span>🛌 {room.noOfBeds} Beds</span> ·{" "}
-            <span>📶 High-Speed Wi-Fi</span> · <span>☕ Climate Control</span>
-          </div>
+        <section className="summary-content">
+          <div className="summary-layout">
+            <div className="summary-left">
+              <article className="summary-card">
+                <header className="summary-card-header">
+                  <span className="summary-step">01</span>
+                  <h2>Guest contact</h2>
+                </header>
 
-          <div style={{ marginTop: "20px" }}>
-            <div style={styles.priceRow}>
-              <span style={styles.textMuted}>Standard Rate</span>
-              <span
-                style={{
-                  color: "#8c8c8c",
-                  textDecoration: "line-through",
-                  fontSize: "15px",
-                }}
-              >
-                SEK{room.pricePerNight}
-              </span>
+                <div className="summary-guest-grid">
+                  <div className="summary-guest-field">
+                    <span className="summary-field-label">Name</span>
+                    <p className="summary-field-value">
+                      {[user.firstName, user.lastName]
+                        .filter(Boolean)
+                        .join(" ") ||
+                        user.username ||
+                        "Authenticated guest"}
+                    </p>
+                  </div>
+
+                  <div className="summary-guest-field">
+                    <span className="summary-field-label">Email</span>
+                    <p className="summary-field-value">{user.email || "—"}</p>
+                  </div>
+                </div>
+
+                <p className="summary-note">
+                  Your digital key and receipt will be sent to this email.
+                </p>
+              </article>
+
+              {additionalGuestsCount > 0 && (
+                <article className="summary-card">
+                  <header className="summary-card-header">
+                    <span className="summary-step">02</span>
+                    <h2>Accompanying guests</h2>
+                  </header>
+
+                  <p className="summary-note summary-note--top">
+                    Your search included {totalGuests} guests. Please list the
+                    names of those sharing your room.
+                  </p>
+
+                  <div className="summary-companion-list">
+                    {extraGuests.map((guestName, index) => (
+                      <div key={index} className="summary-companion-field">
+                        <label
+                          htmlFor={`companion-${index}`}
+                          className="summary-field-label"
+                        >
+                          Full name — Companion #{index + 1}
+                        </label>
+                        <input
+                          id={`companion-${index}`}
+                          type="text"
+                          placeholder="e.g. Axel Wallin"
+                          value={guestName}
+                          onChange={(e) =>
+                            handleGuestNameChange(index, e.target.value)
+                          }
+                          className="summary-input"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              )}
+
+              <article className="summary-card summary-card--policy">
+                <header className="summary-card-header">
+                  <span className="summary-step">
+                    {additionalGuestsCount > 0 ? "03" : "02"}
+                  </span>
+                  <h2>Cancellation policy</h2>
+                </header>
+
+                <ul className="summary-policy-list">
+                  <li>Free cancellation up to 24 hours before check-in.</li>
+                  <li>Check-in from 15:00. Check-out before 11:00.</li>
+                  <li>Payment processed securely via Stripe.</li>
+                </ul>
+              </article>
             </div>
 
-            <div
-              style={{
-                ...styles.priceRow,
-                borderTop: "1px solid #f0f0f0",
-                paddingTop: "20px",
-                marginTop: "15px",
-              }}
-            >
-              <span
-                style={{
-                  fontWeight: "600",
-                  color: "#1c1c1c",
-                  fontSize: "15px",
-                }}
-              >
-                Total Stay Rate
-              </span>
-              <span
-                style={{
-                  fontSize: "28px",
-                  fontWeight: "300",
-                  color: "#1c1c1c",
-                  lineHeight: "1",
-                }}
-              >
-                SEK{memberPrice}
-                <small
-                  style={{
-                    fontSize: "13px",
-                    color: "#767676",
-                    fontWeight: "400",
-                    marginLeft: "2px",
-                  }}
-                >
-                  / night
-                </small>
-              </span>
-            </div>
-          </div>
+            <aside className="summary-right">
+              <div className="summary-room-card">
+                <div className="summary-room-image">
+                  <img
+                    src={
+                      room.image_url
+                        ? `${API_BASE}${room.image_url}`
+                        : "/placeholder-image.jpg"
+                    }
+                    alt={room.type}
+                  />
+                </div>
 
-          <button
-            style={styles.primaryBtn}
-            onClick={handleConfirmBooking}
-            disabled={isSubmitting}
-          >
-            {isSubmitting
-              ? "Processing Transaction..."
-              : "Complete Reservation"}
-          </button>
-        </div>
-      </div>
-    </div>
+                <div className="summary-room-body">
+                  <p className="summary-room-eyebrow">
+                    Room {room.roomNumber}
+                  </p>
+                  <h3 className="summary-room-title">
+                    {room.type
+                      ? `${room.type.charAt(0).toUpperCase()}${room.type.slice(1)} room`
+                      : "Room"}
+                  </h3>
+
+                  <p className="summary-room-description">
+                    {room.description ||
+                      "Thoughtfully designed with Nordic craftsmanship, organic textiles and clean architectural lighting."}
+                  </p>
+
+                  <ul className="summary-room-meta">
+                    <li>
+                      <span>Check-in</span>
+                      <strong>{formatDate(fromDate)}</strong>
+                    </li>
+                    <li>
+                      <span>Check-out</span>
+                      <strong>{formatDate(toDate)}</strong>
+                    </li>
+                    <li>
+                      <span>Guests</span>
+                      <strong>{totalGuests}</strong>
+                    </li>
+                    <li>
+                      <span>Nights</span>
+                      <strong>{nights}</strong>
+                    </li>
+                    <li>
+                      <span>Beds</span>
+                      <strong>{room.noOfBeds}</strong>
+                    </li>
+                  </ul>
+
+                  <div className="summary-price-block">
+                    <div className="summary-price-row">
+                      <span>
+                        SEK {pricePerNight.toLocaleString("sv-SE")} × {nights}{" "}
+                        night{nights > 1 ? "s" : ""}
+                      </span>
+                      <span>
+                        SEK {totalPrice.toLocaleString("sv-SE")}
+                      </span>
+                    </div>
+
+                    <div className="summary-price-row summary-price-row--total">
+                      <span>Total</span>
+                      <strong>
+                        SEK {totalPrice.toLocaleString("sv-SE")}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="summary-primary-btn"
+                    onClick={handleConfirmBooking}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Processing…" : "Complete reservation"}
+                  </button>
+
+                  <p className="summary-secure">
+                    Secure payment powered by Stripe
+                  </p>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </>
   );
 }
 

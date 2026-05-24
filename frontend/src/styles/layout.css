@@ -259,7 +259,8 @@
 .offers-page,
 .room-detail-page,
 .meetings-events-page,
-.wellness-page {
+.wellness-page,
+.summary-page {
   background: #f8f3ef;
 }
 
@@ -267,7 +268,8 @@ body:has(.rooms-page) .header,
 body:has(.offers-page) .header,
 body:has(.room-detail-page) .header,
 body:has(.meetings-events-page) .header,
-body:has(.wellness-page) .header {
+body:has(.wellness-page) .header,
+body:has(.summary-page) .header {
   background: #f8f3ef;
   box-shadow: none;
 }
@@ -276,6 +278,7 @@ body:has(.rooms-page) .topbar,
 body:has(.offers-page) .topbar,
 body:has(.room-detail-page) .topbar,
 body:has(.meetings-events-page) .topbar,
-body:has(.wellness-page) .topbar {
+body:has(.wellness-page) .topbar,
+body:has(.summary-page) .topbar {
   background: #f8f3ef;
 }
