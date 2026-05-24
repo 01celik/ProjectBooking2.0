@@ -279,3 +279,107 @@
 .error-msg {
   color: #9f1d1d !important;
 }
+
+@media (max-width: 1180px) {
+  .admin-rooms-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-rooms-top-actions {
+    justify-content: stretch;
+  }
+
+  .admin-add-room-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .admin-rooms-table-wrapper {
+    overflow-x: visible;
+  }
+
+  .admin-rooms-table,
+  .admin-rooms-table thead,
+  .admin-rooms-table tbody,
+  .admin-rooms-table tr,
+  .admin-rooms-table th,
+  .admin-rooms-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .admin-rooms-table thead {
+    display: none;
+  }
+
+  .admin-rooms-table tr {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid rgba(77, 0, 27, 0.12);
+    border-radius: 1.1rem;
+    background: #ffffff;
+    box-shadow: 0 14px 36px rgba(76, 0, 27, 0.07);
+  }
+
+  .admin-rooms-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    white-space: normal;
+  }
+
+  .admin-rooms-table td::before {
+    color: rgba(76, 0, 27, 0.58);
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .admin-rooms-table td:nth-child(1)::before {
+    content: "Room";
+  }
+
+  .admin-rooms-table td:nth-child(2)::before {
+    content: "Type";
+  }
+
+  .admin-rooms-table td:nth-child(3)::before {
+    content: "Beds";
+  }
+
+  .admin-rooms-table td:nth-child(4)::before {
+    content: "Price";
+  }
+
+  .admin-rooms-table td:nth-child(5)::before {
+    content: "Status";
+  }
+
+  .admin-rooms-table td:nth-child(6)::before {
+    content: "Actions";
+  }
+
+  .admin-room-modal {
+    padding: 1.2rem;
+  }
+
+  .admin-room-modal-actions {
+    flex-direction: column;
+  }
+
+  .admin-room-btn {
+    width: 100%;
+  }
+
+  .admin-room-action-group {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .admin-room-action {
+    width: auto;
+  }
+}

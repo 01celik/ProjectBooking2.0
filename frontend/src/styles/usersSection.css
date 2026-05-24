@@ -296,16 +296,6 @@
   font-weight: 800;
 }
 
-@media (max-width: 1180px) {
-  .users-stats-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .users-toolbar {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 700px) {
   .users-header,
   .users-table-card {
@@ -318,5 +308,70 @@
 
   .users-table-header {
     flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .users-table-wrapper {
+    overflow-x: visible;
+  }
+
+  .users-table,
+  .users-table thead,
+  .users-table tbody,
+  .users-table tr,
+  .users-table th,
+  .users-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .users-table thead {
+    display: none;
+  }
+
+  .users-table tr {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid rgba(77, 0, 27, 0.12);
+    border-radius: 1.1rem;
+    background: #ffffff;
+    box-shadow: 0 14px 36px rgba(76, 0, 27, 0.07);
+  }
+
+  .users-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    white-space: normal;
+  }
+
+  .users-table td::before {
+    color: rgba(76, 0, 27, 0.58);
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .users-table td:nth-child(1)::before {
+    content: "User";
+  }
+
+  .users-table td:nth-child(2)::before {
+    content: "Contact";
+  }
+
+  .users-table td:nth-child(3)::before {
+    content: "Role";
+  }
+
+  .users-role-select {
+    width: auto;
+    min-width: 7rem;
+  }
+
+  .users-name-cell {
+    align-items: flex-start;
   }
 }
