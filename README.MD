@@ -1,4 +1,5 @@
 PROJECT BOOKING 2.0 - GROUP 12
+https://project-booking2-0.vercel.app/
 # Hotel Booking System
 
 A full-stack hotel booking platform built with **React (Frontend)**, **Node.js (Backend)**, **PostgreSQL**, **Supabase**, and **Stripe** for payment processing.
