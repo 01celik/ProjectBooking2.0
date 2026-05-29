@@ -38,6 +38,9 @@ function AdminRooms() {
 
       const response = await fetch(`${ADMIN_API_BASE}/admin/rooms`, {
         credentials: "include",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       const data = await response.json();
@@ -64,6 +67,7 @@ function AdminRooms() {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           roomNumber: Number(formData.roomNumber),
@@ -115,6 +119,7 @@ function AdminRooms() {
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({
             noOfBeds: Number(editFormData.noOfBeds),
@@ -147,6 +152,9 @@ function AdminRooms() {
         {
           method: "DELETE",
           credentials: "include",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
 

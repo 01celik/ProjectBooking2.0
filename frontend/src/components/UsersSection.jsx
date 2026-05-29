@@ -29,6 +29,9 @@ function UsersSection() {
       const response = await fetch(`${ADMIN_API_BASE}/admin/users`, {
         method: "GET",
         credentials: "include",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       const result = await response.json();
@@ -68,6 +71,7 @@ function UsersSection() {
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({ role: newRole }),
         }
