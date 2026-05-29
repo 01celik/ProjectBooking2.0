@@ -26,7 +26,7 @@ const teamMembers = [
     image: sanImage,
   },
   {
-    name: "Fatih celik",
+    name: "Fatih Celik",
     role: "Frontend, Backend, System Integration, Deployment, Production Testing",
     image: fatihImage,
   },
@@ -36,7 +36,7 @@ const teamMembers = [
     image: mateuszImage,
   },
   {
-    name: "Azhaf khan",
+    name: "Azhaf Khan",
     role: "Frontend, Authentication UI, User Profile, Responsive Design",
     image: azhafImage,
   },
