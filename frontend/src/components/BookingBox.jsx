@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE } from "../config/api";
-
+import { useAuth } from "../context/AuthContext";
 function BookingBox() {
+  const { user } = useAuth();
+
   const [dateOpen, setDateOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
 
@@ -30,13 +32,31 @@ function BookingBox() {
     const days = new Date(year, month, 0).getDate();
     const dayOfWeek = new Date(year, month - 1, 1).getDay(); // 0=Sun
     const startOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Mon=0
-    const names = ["January","February","March","April","May","June",
-                   "July","August","September","October","November","December"];
-    return { label: `${names[month - 1]} ${year}`, year, month, days, startOffset };
+    const names = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    return {
+      label: `${names[month - 1]} ${year}`,
+      year,
+      month,
+      days,
+      startOffset,
+    };
   }
 
-  const months = [0, 1].map(i => {
-    const total = (BASE_MONTH - 1) + monthOffset + i;
+  const months = [0, 1].map((i) => {
+    const total = BASE_MONTH - 1 + monthOffset + i;
     return getMonthData(BASE_YEAR + Math.floor(total / 12), (total % 12) + 1);
   });
 
@@ -83,6 +103,12 @@ function BookingBox() {
 
   // New async function to handle the API submission
   async function handleBookingSubmit() {
+    if (!user) {
+      navigate("/login", {
+        state: { from: "/" }, // or wherever you want them to return
+      });
+      return;
+    }
     if (!checkIn || !checkOut) {
       alert("Please select both check-in and check-out dates.");
       return;
@@ -100,17 +126,14 @@ function BookingBox() {
     };
 
     try {
-      const response = await fetch(
-        `${API_BASE}/rooms/getAvailableRoom`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // Keeps your working session cookie attached
-          body: JSON.stringify(requestBody),
+      const response = await fetch(`${API_BASE}/rooms/getAvailableRoom`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        credentials: "include", // Keeps your working session cookie attached
+        body: JSON.stringify(requestBody),
+      });
 
       if (!response.ok) {
         // If it still fails, let's see what the backend error message says
@@ -244,73 +267,76 @@ function BookingBox() {
           <div className="calendar-nav-wrapper">
             <button
               className="cal-nav-btn"
-              onClick={() => setMonthOffset(o => Math.max(0, o - 1))}
+              onClick={() => setMonthOffset((o) => Math.max(0, o - 1))}
               disabled={monthOffset === 0}
               aria-label="Previous month"
             >
               &#8249;
             </button>
 
-          <div className="months-wrapper">
-            {months.map((month) => (
-              <div className="month-block" key={month.label}>
-                <h2>{month.label}</h2>
+            <div className="months-wrapper">
+              {months.map((month) => (
+                <div className="month-block" key={month.label}>
+                  <h2>{month.label}</h2>
 
-                <div className="calendar-grid">
-                  <span>Mon</span>
-                  <span>Tue</span>
-                  <span>Wed</span>
-                  <span>Thu</span>
-                  <span>Fri</span>
-                  <span>Sat</span>
-                  <span>Sun</span>
+                  <div className="calendar-grid">
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                    <span>Sun</span>
 
-                  {Array.from({ length: month.startOffset }).map((_, index) => (
-                    <span key={`${month.month}-empty-${index}`}></span>
-                  ))}
+                    {Array.from({ length: month.startOffset }).map(
+                      (_, index) => (
+                        <span key={`${month.month}-empty-${index}`}></span>
+                      ),
+                    )}
 
-                  {Array.from({ length: month.days }, (_, index) => {
-                    const day = index + 1;
-                    const dateString = buildDateString(
-                      month.year,
-                      month.month,
-                      day,
-                    );
+                    {Array.from({ length: month.days }, (_, index) => {
+                      const day = index + 1;
+                      const dateString = buildDateString(
+                        month.year,
+                        month.month,
+                        day,
+                      );
 
-                    const isStart = dateString === checkIn;
-                    const isEnd = dateString === checkOut;
-                    const isInRange =
-                      checkIn &&
-                      checkOut &&
-                      dateString > checkIn &&
-                      dateString < checkOut;
+                      const isStart = dateString === checkIn;
+                      const isEnd = dateString === checkOut;
+                      const isInRange =
+                        checkIn &&
+                        checkOut &&
+                        dateString > checkIn &&
+                        dateString < checkOut;
 
-                    const className = isStart || isEnd
-                      ? "selected-date"
-                      : isInRange
-                      ? "in-range-date"
-                      : "";
+                      const className =
+                        isStart || isEnd
+                          ? "selected-date"
+                          : isInRange
+                            ? "in-range-date"
+                            : "";
 
-                    return (
-                      <button
-                        key={dateString}
-                        onClick={() =>
-                          handleDateClick(month.year, month.month, day)
-                        }
-                        className={className}
-                      >
-                        {day}
-                      </button>
-                    );
-                  })}
+                      return (
+                        <button
+                          key={dateString}
+                          onClick={() =>
+                            handleDateClick(month.year, month.month, day)
+                          }
+                          className={className}
+                        >
+                          {day}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
             <button
               className="cal-nav-btn"
-              onClick={() => setMonthOffset(o => o + 1)}
+              onClick={() => setMonthOffset((o) => o + 1)}
               aria-label="Next month"
             >
               &#8250;
